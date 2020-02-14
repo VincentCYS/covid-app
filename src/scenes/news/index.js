@@ -1,25 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Text, View, Alert, TouchableOpacity, RefreshControl, SafeAreaView, Linking } from "react-native";
 import { Container, Body, List, Card, CardItem, Icon } from "native-base";
 import constants from "../../helpers/constants";
 import API from "../../helpers/api";
-import styles from "./home_style";
+import styles from "./news_style";
 
 
-export default function Home(props)  {
 
+
+export default function News(props)  {
 
   const [loading, setLoading] = useState(true);
   const [articles, setArticles] = useState([]);
 
-  getArticles();
 
-  function getArticles() {
-    API.get(`/articles/100`, {})
+  useEffect(() => {
+    getArticles();
+  },[])
+
+  function getArticles() {    
+    setLoading(true);
+    API.get(`/articles/${props.numOfArticles || 100}`, {})
       .then(res => {
-        console.log(res);
         setLoading(false);
         setArticles(res.data);
+        console.log('===> articles', articles);
+        
       })
       .catch(err => {
         setLoading(false);
@@ -44,42 +50,39 @@ export default function Home(props)  {
     published = published.join(":");
 
     return (
-      <Card key={`articles-${row.index}`}>
+      <Card key={`articles-${row.index}`} style = {{borderColor : constants.colors.darkGrey}}>
 
-        <CardItem bordered>
+        <CardItem  style = {styles.cardItem}>
           <TouchableOpacity onPress = {() => openSourceUrl(item.url)}>
-            {/* news title */}
-            <Text style = {styles.cardTitle}>{item.title}</Text>
-          </TouchableOpacity>
+              {/* news title */}
+              <Text style = {styles.cardTitle}>{item.title}</Text>
+            </TouchableOpacity>
         </CardItem>
 
-        <CardItem>
-        {/* source */}
-        <TouchableOpacity style = {{flex : 1}} onPress = {() => openSourceUrl(item.sourceUrl)}>
-            <Text style = {styles.timeTxt}>來源: {item.source}</Text>
-        </TouchableOpacity>
-        {/* updated time */}
-        <View style = {styles.cardTime}>
-            <Text style = {styles.timeTxt}>更新時間: {published}</Text>
-        </View>
+        <CardItem  style = {styles.cardItem}>
+            {/* news title */}
+            <Text style = {[styles.cardTitle, {fontSize : 16, fontWeight: '500', lineHeight : 20}]}>{item.content}</Text>
+        </CardItem>
+
+        <CardItem  style = {styles.cardItem}>
+          {/* source */}
+          <TouchableOpacity style = {{flex : 1}} onPress = {() => openSourceUrl(item.sourceUrl)}>
+              <Text style = {styles.timeTxt}>來源: {item.source}</Text>
+          </TouchableOpacity>
+          {/* updated time */}
+          <View style = {styles.cardTime}>
+              <Text style = {styles.timeTxt}>更新時間: {published}</Text>
+          </View>
         </CardItem>
 
       </Card>
     );
   }
 
-  // function sorting(){
-  //   articles.reverse();
-  //   setArticles(articles)
-  // }
     return (
-      <SafeAreaView>
+      // <SafeAreaView>
+      <View style = {{backgroundColor : constants.colors.black}}>
           <Text style={styles.title}>武漢肺炎相關新聞</Text>
-    
-          <TouchableOpacity>
-
-          </TouchableOpacity>
-
           {
               <List
               style={styles.list}
@@ -92,15 +95,13 @@ export default function Home(props)  {
                       colors = {[constants.colors.primary]}
                       refreshing={loading}
                       onRefresh={() => {
-                        setArticles([]);
-                        setLoading(true);
+                        getArticles();
                       }}
-                  />
-                            }
+                  />}
             /> 
           
-          }      
-      </SafeAreaView>
+          }    
+        </View>  
     );
   
 }

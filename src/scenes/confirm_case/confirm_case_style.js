@@ -37,11 +37,11 @@ module.exports = StyleSheet.create({
     borderRadius    : 20
   },
   dateTxt: {
-    width     : "50%",
-    alignSelf : "flex-end",
-    marginTop : 20,
+    width        : "50%",
+    alignSelf    : "flex-end",
+    marginTop    : 20,
     marginBottom : 20,
-    color     : constants.colors.fontWhite
+    color        : constants.colors.fontWhite
   },
   infectedWrapper : {
     flexDirection   : 'row',

@@ -3,7 +3,9 @@
  */
 
 import {AppRegistry} from 'react-native';
-import Home from './src/scenes/stat';
+import Tabs from './src/scenes/tabs_screen';
 import {name as appName} from './app.json';
 
-AppRegistry.registerComponent(appName, () => Home);
+console.disableYellowBox = true;
+
+AppRegistry.registerComponent(appName, () => Tabs);

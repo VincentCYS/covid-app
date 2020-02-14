@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import { Text, View, ActivityIndicator, Alert, StatusBar, RefreshControl, SafeAreaView, ScrollView } from "react-native";
 import { Container, Body, List, Card, CardItem, Icon } from "native-base";
 import constants from "../../helpers/constants";
@@ -13,23 +13,29 @@ import {
     StackedBarChart
   } from "react-native-chart-kit";
 import { widthPercentageToDP, heightPercentageToDP } from "react-native-responsive-screen";
+import Home from "../news";
 
-export default class Stat extends React.Component {
-  state = {
-    loading: true,
-    updateDate : '',
-    case : [],
-    immigration : [],
-    figure : []
-  };
+export default function Stat (props) {
 
-  componentDidMount() {
-    this.getData('case');
-    this.getData('immigration');
-    this.getData('figure');
-  }
 
-  activityIndicatorLoadingView() {
+  const [loading, setLoading] = useState(true)
+  const [updateDate, setUpdateDate] = useState('')
+  const [data, setData] = useState({})
+  // const [cases, setCase] = useState([])
+  // const [immigration, setImmigration] = useState([])
+  // const [figure, setFigure] = useState([])
+
+  useEffect(() => {
+    getData('case');
+    getData('figure');
+
+    getData('immigration');
+  }, [])
+ 
+  
+
+
+  function activityIndicatorLoadingView() {
     return (
       <ActivityIndicator
         color={constants.colors.primary}
@@ -47,49 +53,83 @@ export default class Stat extends React.Component {
     );
 }
 
-  getData(type) {
-      this.setState({ loading : true }, () => {
-        API.get(`/${type}`, {})
-        .then(res => {
-            var published = null
-            if (res.lastUpdate) {
-                published = new Date(res.lastUpdate);
-                published.setHours(published.getHours() + 8);
-                published = published
-                  .toISOString()
-                  .split("T")
-                  .join(" ")
-                  .split(":");
-                published.pop();
-                published = published.join(":");
-            }
-
-          this.setState({
-            loading: false,
-            [type]: res.data,
-            updateDate : published ? published: this.state.updateDate
-          });
-        })
-        .catch(err =>
-          this.setState({ loading: false }, () =>
-            Alert.alert("Failed to fetch error: " + err.messages[0])
-          )
-        );
+  function getData (type) {
+      setLoading(true);
+      API.get(`/${type}`, {})
+      .then(res => {
+          var published = null
+          if (res.lastUpdate) {
+              published = new Date(res.lastUpdate);
+              published.setHours(published.getHours() + 8);
+              published = published
+                .toISOString()
+                .split("T")
+                .join(" ")
+                .split(":");
+              published.pop();
+              published = published.join(":");
+          }
+          setLoading(false);
+          setData(prev => ({...prev, [type] : res.data}))
+          setUpdateDate(prev => (published ? published: prev))    
       })
+      .catch(err => {
+          setLoading(false)
+          Alert.alert("Failed to fetch error: " + err.messages)
+      });
   }
 
-  openSourceUrl(url) {
+  function openSourceUrl(url) {
     Linking.openURL(url).catch(err => console.error("Couldn't load page", err));
   }
 
-  renderCase() {
-    var cases = this.state.case || [];
+  function renderInfectedCase() {
+    var figure = data.figure || [];
+    // var figure = (data || {}).figure || [];
+    figure = figure[figure.length - 1] || {};
+
+    return (
+      <View style = {styles.infectedWrapper}>
+      
+      <Card style = {styles.infectedCard}>
+      <Text style = {styles.subtitle}>死亡</Text>
+      <Text style = {styles.subtitle}>{figure.death || '-'}</Text>
+
+      </Card>
+
+      <Card style = {styles.infectedCard}>
+      <Text style = {styles.subtitle}>確診</Text>
+      <Text style = {styles.subtitle}>{figure.comfirmCase || '-'}</Text>
+
+      </Card>
+
+      <Card style = {styles.infectedCard}>
+      <Text style = {styles.subtitle}>呈報</Text>
+      <Text style = {styles.subtitle}>{figure.fulfillReportingCriteria || '-'}</Text>
+
+      </Card>
+
+      <Card style = {styles.infectedCard}>
+      <Text style = {styles.subtitle}>排除</Text>
+      <Text style = {styles.subtitle}>{figure.ruleOut || '-'}</Text>
+
+      </Card>
+
+      </View>
+    )
+  }
+
+
+
+  function renderCase() {
+
+    var cases = data.case || [];
     var local = 0;
     var nonLocal = 0;
 
     cases.map(c => c.hkResidents === '香港居民' ? local++ : nonLocal++);
 
-    var data = [
+    var d = [
         {
             name: "香港居民",
             population: local,
@@ -109,10 +149,10 @@ export default class Stat extends React.Component {
     return (
         <Card style = {styles.card} bordered = {false}>
             <Text style = {[styles.title, {marginBottom : 0}]}>確診人數數字</Text>
-            <Text style = {styles.subtitle}>總計 {data[0].population + data[1].population} 人</Text>  
+            <Text style = {styles.subtitle}>總計 {d.reduce((a, c) => a.population + c.population)} 人</Text>  
 
             <PieChart
-                data={data}
+                data={d}
                 width={widthPercentageToDP('100%')}
                 height={220}
                 chartConfig={{
@@ -134,11 +174,11 @@ export default class Stat extends React.Component {
     );
   }
 
+  function renderImmigration() {
 
-  renderImmigration() {
-    var immigration = this.state.immigration || [];
+    var immigration = data.immigration || [];
 
-    var data = {
+    var dataset = {
         labels: [],
         datasets: [
           {
@@ -147,92 +187,93 @@ export default class Stat extends React.Component {
         ],
       };
 
-    immigration = immigration.reverse();
+    immigration.reverse();
+
     var total = 0;
     immigration.length ? immigration.map((d, i) => {
-        if (i % 2 == 0 && data.labels.length < 10) {
-            data.labels.push(d.dateString.split('年').pop())
-
+        if (i % 2 == 0 && dataset.labels.length < 10) {
+          var date = d.dateString.split('年').pop();
+          date  = date.split('月').reverse().join('/').split('日').join('').replace(' ', '')          
+          dataset.labels.push(date)
             total += d.data['總計'].mainlandArrival
-            data.datasets[0].data.push(d.data['總計'].mainlandArrival);
+            dataset.datasets[0].data.push(d.data['總計'].mainlandArrival);
         }
     }) : null
 
-    return (
-        data.datasets[0].data.length ? 
-            <LineChart
-                data={data}
-                width={widthPercentageToDP('94%')}
-                height={heightPercentageToDP('50%')}
-                verticalLabelRotation = {90}
-                fromZero
-                segments = {5}
-                chartConfig={{
-                    backgroundColor: constants.colors.darkGrey,
-                    backgroundGradientFrom: constants.colors.darkGrey,
-                    backgroundGradientTo: constants.colors.darkGrey,
-                    decimalPlaces: 0, // optional, defaults to 2dp
-                    color: (opacity = 1) => constants.colors.primary,
-                    labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                    style: {
+    
+      return (
+        dataset.datasets[0].data.length ? 
+        <Card style = {[styles.card, {marginTop : heightPercentageToDP('2%')}]}>
+              <Text style = {[styles.title, {marginBottom : -10}]}>大陸居民入境數字</Text>
+              <LineChart
+                  data={dataset}
+                  width={widthPercentageToDP('94%')}
+                  height={heightPercentageToDP('50%')}
+                  verticalLabelRotation = {90}
+                  fromZero
+                  segments = {5}
+                  chartConfig={{
+                      backgroundColor: constants.colors.darkGrey,
+                      backgroundGradientFrom: constants.colors.darkGrey,
+                      backgroundGradientTo: constants.colors.darkGrey,
+                      decimalPlaces: 0, // optional, defaults to 2dp
+                      color: (opacity = 1) => constants.colors.primary,
+                      labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                      style: {
+                        borderRadius: 16,
+                      },
+                      propsForDots: {
+                        r: "3",
+                        strokeWidth: "2",
+                        stroke: "#fff"
+                      }
+                    }}
+                  style={{
                       borderRadius: 16,
-                    },
-                    propsForDots: {
-                      r: "3",
-                      strokeWidth: "2",
-                      stroke: "#fff"
-                    }
-                  }}
-                style={{
-                    borderRadius: 16,
-                    paddingTop : 40,
-                    marginBottom : 80,
-                    
-                  }}
-            /> : null
-    );
-  }
+                      paddingTop : 40,                      
+                    }}
+              /> 
+          </Card>: null
+      );
+    }     
 
+console.log('===> data: ', data);
 
-  render() {
 
     return (
-
       <SafeAreaView style = {styles.wrapper}>
       <StatusBar barStyle = {'light-content'}/>
         {
-          !this.state.loading ? 
-          <ScrollView style={styles.container} refreshing = {this.state.loading}
+          !loading ? 
+          <ScrollView style={styles.container} refreshing = {loading}
           refreshControl={
               <RefreshControl
                   colors = {[constants.colors.primary]}
-                  refreshing={this.state.loading}
+                  refreshing={loading}
                   onRefresh={() => {
-                      this.setState({
-                          loading : true
-                      }, () => {
-                        this.getData('case');
-                        this.getData('immigration');
-                        this.getData('figure');
-                      }
-                      )
+                        setLoading(false)
+                        getData('case');
+                        getData('immigration');
+                        getData('figure');
                   }}
                 />}>
             
             <Text style={styles.title}>圖表數據</Text>
+            <Text style={styles.dateTxt}>更新時間: {updateDate}</Text>
             
-            <Text style={styles.dateTxt}>更新時間: {this.state.updateDate}</Text>
-            { this.renderCase() }
+            { renderInfectedCase() }
+          
+            { renderCase() }
 
-            <Text style = {[styles.title, {marginBottom : -30}]}>大陸居民入境數字</Text>
-            { this.renderImmigration() }
+            { renderImmigration() }
 
-        
+            <Text style={[styles.subtitle, {marginBottom : -70, marginTop : 30}]}>最新消息</Text>
+            <Home numOfArticles = {3} showContent = {true} showTitle = {false}/>
             
           
-          </ScrollView> : this.activityIndicatorLoadingView()
+          </ScrollView> : activityIndicatorLoadingView()
       }
       </SafeAreaView>
     );
   }
-}
+
