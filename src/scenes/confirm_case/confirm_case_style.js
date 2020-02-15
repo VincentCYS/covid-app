@@ -13,8 +13,10 @@ module.exports = StyleSheet.create({
   container: {
     flex            : 1,
     backgroundColor : constants.colors.black,
-    padding         : 10
+    padding         : 5
   },
+
+  // Font Style
   title: {
     fontSize     : wp("5%"),
     marginTop    : hp("3%"),
@@ -26,15 +28,15 @@ module.exports = StyleSheet.create({
   subtitle: {
     color      : constants.colors.primary,
     alignSelf  : "center",
-    marginTop  : 20,
     fontSize   : wp("5%"),
     fontWeight : "500",
     color      : constants.colors.fontWhite
   },
-  card: {
-    backgroundColor : constants.colors.darkGrey,
-    borderColor     : constants.colors.darkGrey,
-    borderRadius    : 20
+  normalTxt : {
+    fontSize     : wp("4%"),
+    color        : constants.colors.fontWhite,
+    marginTop    : 5,
+    marginBottom : 5,
   },
   dateTxt: {
     width        : "50%",
@@ -43,11 +45,8 @@ module.exports = StyleSheet.create({
     marginBottom : 20,
     color        : constants.colors.fontWhite
   },
-  infectedWrapper : {
-    flexDirection   : 'row',
-    marginBottom    : hp('5%'),
-    backgroundColor : constants.colors.black
-  },
+
+  // Body
   infectedCard : {
     flex            : 1,
     backgroundColor : constants.colors.darkGrey,
@@ -56,5 +55,18 @@ module.exports = StyleSheet.create({
     padding         : wp('3%'),
     paddingTop      : 0,
     borderRadius    : 5
+  },
+  card: {
+    backgroundColor : constants.colors.darkGrey,
+    borderColor     : constants.colors.darkGrey,
+    borderRadius    : 20,
+  },
+  roundWrapper : {
+    backgroundColor : constants.colors.primary,
+    borderRadius    : 20,
+    padding         : 5,
+    paddingLeft     : 15,
+    paddingRight    : 15,
+
   }
 });

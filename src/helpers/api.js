@@ -5,7 +5,7 @@ var API = function() {}
 
 // declare API endpoint
 const EP = {
-    prod : "https://api.n-cov.info",
+    prod  : "https://api.n-cov.info",
     local : "http://localhost:13500"
 }["prod"];
 // set prototype
@@ -13,15 +13,15 @@ API.prototype.get = function(path, query = {}){
     return new Promise((resolve, reject) => {
         // set headers
         var headerParams = {
-            'Content-Type'  : 'application/json'
+            'Content-Type' : 'application/json'
         };
         // get user id and token
         new Promise((_resolve, _reject) => {
-            var queryString = "";
-            if(Object.keys(query).length > 0) queryString = `?${Object.keys(query).map(key => { return `${key}=${query[key]}`}).join("&")}`;
+            var queryString                                = "";
+            if (Object.keys(query).length > 0) queryString = `?${Object.keys(query).map(key => { return `${key} = ${query[key]}`}).join("&")}`;
             // login
             fetch(`${EP}${path}${queryString}`, { 
-                method  : 'GET', 
+                method  : 'GET',
                 headers : new Headers(headerParams)
             })
             // get respoonse
