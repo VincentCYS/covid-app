@@ -11,7 +11,6 @@ module.exports = StyleSheet.create({
     height          : '100%',
     backgroundColor : constants.colors.black,
     padding         : 10,
-    paddingBottom   : 0,
   },
   title: {
     fontSize   : wp('5%'),

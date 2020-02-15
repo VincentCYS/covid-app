@@ -164,7 +164,7 @@ export default function HighRisk(props) {
             dataArray={districts.filter(
               d => d.title.includes(keywords) || d.content.includes(keywords),
             )}
-            style         = {{marginTop: 20, height: '80%'}}
+            style         = {{marginTop: 20, marginBottom: 20,  height: '80%'}}
             animation     = {true}
             renderHeader  = {renderHeader}
             renderContent = {renderContent}

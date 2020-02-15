@@ -93,12 +93,12 @@ export default function AboutUs(props) {
           {
             alignItems     : 'center',
             justifyContent : 'center',
-            marginTop      : hp('10%'),
+            marginTop      : hp('5%'),
           },
         ]}>
         <TouchableOpacity
                 style   = {[styles.button, {backgroundColor: '#403f3e'}]}
-                onPress = {() => openSourceUrl('https://wars-mask.surge.sh/')}>
+                onPress = {() => openSourceUrl('https://www.facebook.com/oneshop.cloud/')}>
           <Text style   = {styles.normalTxt}>提供意見</Text>
         </TouchableOpacity>
       </View>

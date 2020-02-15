@@ -95,7 +95,7 @@ export default function ConfirmCase(props) {
                 ]}>
                 {`${item.age}歲 ${item.gender}`}{' '}
               </Text>
-              <TouchableOpacity onPress = {() => openMap(v.hospital)}>
+              <TouchableOpacity onPress = {() => openMap(item.hospital)}>
               <Text             style   = {styles.normalTxt}>{`入住${item.hospital}`} </Text>
               </TouchableOpacity>
             </View>

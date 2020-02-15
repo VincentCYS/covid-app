@@ -135,9 +135,9 @@ export default function Stat(props) {
 
     return (
       <Card style = {styles.card} bordered = {false}>
-      <Text style = {[styles.title, {marginBottom: 0}]}>確診人數數字</Text>
-      <Text style = {styles.subtitle}>
-          總計 {d.reduce((a, c) => a.population + c.population)} 人
+        <Text style = {[styles.title, {marginBottom: 0}]}>確診人數數字</Text>
+        <Text style = {styles.subtitle}>
+            總計 {d.reduce((a, c) => a.population + c.population)} 人
         </Text>
 
         <PieChart
@@ -174,13 +174,13 @@ export default function Stat(props) {
         },
       ],
     };
+    immigration = immigration.sort((a, b) => (a.datetime > b.datetime ? 1 : b.datetime > a.datetime ? -1 : 0));
 
-    immigration.reverse();
 
     var total = 0;
     immigration.length
       ? immigration.map((d, i) => {
-          if (i % 2 == 0 && dataset.labels.length < 10) {
+          if (i  > immigration.length - 11) {
             var date = d.dateString.split('年').pop();
                 date = date
               .split('月')
@@ -197,14 +197,14 @@ export default function Stat(props) {
        :  null;
 
     return dataset.datasets[0].data.length ? (
-      <Card style = {[styles.card, {marginTop: heightPercentageToDP('2%')}]}>
+      <Card style = {[styles.card, {marginTop: heightPercentageToDP('2%'), marginBottom : heightPercentageToDP('5%')}]}>
       <Text style = {[styles.title, {marginBottom: -10}]}>
           大陸居民入境數字
         </Text>
         <LineChart
           data                  = {dataset}
           width                 = {widthPercentageToDP('94%')}
-          height                = {heightPercentageToDP('50%')}
+          height                = {widthPercentageToDP('94%') * 1.2}
           verticalLabelRotation = {90}
           fromZero
           segments    = {5}
