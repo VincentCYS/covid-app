@@ -33,6 +33,8 @@ export default function Stat(props) {
     getData('immigration');
     getData('figure');
     getData('case');
+    getData('worldcomfirm');
+    getData('worlddeath');
   }, []);
 
   function activityIndicatorLoadingView() {
