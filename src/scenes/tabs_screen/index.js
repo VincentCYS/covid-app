@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Container,
   Header,
@@ -11,16 +11,48 @@ import {
   Right,
   Title,
 } from 'native-base';
-import {SafeAreaView, StatusBar} from 'react-native';
+import {
+  SafeAreaView,
+  StatusBar,
+  TouchableOpacity,
+  ActivityIndicator,
+  Image,
+} from 'react-native';
 import News from '../news';
 import Stat from '../stat';
 import ConfirmCase from '../confirm_case';
 import HighRisk from '../high_risk';
 import AboutUs from '../about_us';
 import constants from '../../helpers/constants';
-import { widthPercentageToDP } from 'react-native-responsive-screen';
+import {
+  widthPercentageToDP,
+  heightPercentageToDP,
+} from 'react-native-responsive-screen';
+import codePush from 'react-native-code-push';
+
+// TabsScreen = codePush({ checkFrequency: codePush.CheckFrequency.MANUAL, installMode: codePush.InstallMode.IMMEDIATE })(TabsScreen);
+
 export default function TabsScreen(props) {
-  const [tabs, setTabs] = useState([
+  // codePush.sync({ updateDialog: true },
+  //   (status) => {
+  //       switch (status) {
+  //           case codePush.SyncStatus.DOWNLOADING_PACKAGE:
+  //               // Show "downloading" modal
+  //               break;
+  //           case codePush.SyncStatus.INSTALLING_UPDATE:
+  //               // Hide "downloading" modal
+  //               break;
+  //       }
+  //   },
+  //   ({ receivedBytes, totalBytes, }) => {
+  //     /* Update download modal progress */
+  //   }
+  // );
+
+  const [loading, setLoading]   = useState(true);
+  const [isFirstTime, setIsFirstTime]   = useState(true);
+  const [hvUpdate, setHvUpdate] = useState(false);
+  const [tabs, setTabs]         = useState([
     {
       name      : '圖表數據',
       isActive  : true,
@@ -48,24 +80,104 @@ export default function TabsScreen(props) {
     },
   ]);
 
-  return (
-    <Container style    = {{backgroundColor: constants.colors.black}}>
-    <StatusBar barStyle = {'light-content'} />
+  
+  useEffect(() => {
+    if (isFirstTime) {
+      codePush.checkForUpdate()
+      .then((update) => {
+        setIsFirstTime(false)
+      setLoading(false)
+      if (!update) {        
+        setHvUpdate(false)
+      } else {
+        setHvUpdate(true)
+      }
+      });
+    }
+  })
 
-      <Header hasTabs style = {{backgroundColor: constants.colors.black}}>
-        <Left />
+  function onButtonPress() {
+    setLoading(true)
+
+    codePush.sync({
+      updateDialog : true,
+      installMode  : codePush.InstallMode.IMMEDIATE,
+    }, (status) => {
+      switch (status) {
+          case codePush.SyncStatus.UPDATE_INSTALLED:
+              codePush.allowRestart()
+              codePush.restartApp(true);
+              // Hide "downloading" modal
+              break;
+      }
+    });
+  }
+
+  function activityIndicatorLoadingView() {
+    return (
+      <ActivityIndicator
+        color = {constants.colors.primary}
+        size  = "small"
+        style = {{
+          marginRight : 5,
+          backgroundColor : constants.colors.black,
+          alignItems      : 'center',
+          justifyContent  : 'center',
+        }}
+      />
+    );
+  }
+
+
+
+  return (
+    <Container style = {{backgroundColor: constants.colors.black}}>
+      <StatusBar
+        barStyle        = {'light-content'}
+        backgroundColor = {constants.colors.black}
+      />
+
+      <Header
+        hasTabs
+              style                 = {{backgroundColor: constants.colors.black}}
+              androidStatusBarColor = {constants.colors.darkGrey}>
+        <Left style                 = {{flex: 1}} />
         <Body>
-          <Title style = {{color: constants.colors.primary}}>NCOV</Title>
+          <Title
+            style={{
+              color     : constants.colors.primary,
+              alignSelf : 'center',
+              textAlign : 'center',
+            }}>
+            COVID 19
+          </Title>
         </Body>
-        <Right />
+        <Right>
+          {
+            loading ? activityIndicatorLoadingView() : 
+            hvUpdate? 
+              <TouchableOpacity onPress = {() => onButtonPress()}>
+                <Text             style   = {{color: 'white', fontSize : 12}}>更新</Text>
+              </TouchableOpacity>
+             : 
+              <Image
+                style  = {{width: 20, height: 20, marginRight : 5}}
+                source = {{uri : constants.icon.tick}}
+              />
+          }
+        
+        </Right>
       </Header>
 
       <SafeAreaView style = {{flex: 1}}>
         <Tabs
           tabBarPosition        = {'top'}
           tabBarActiveTextColor = {'#000'}
-          tabBarUnderlineStyle  = {{backgroundColor: constants.colors.primary, height : 2}}
-          onChangeTab           = {(tab, ref) => {
+          tabBarUnderlineStyle  = {{
+            backgroundColor : constants.colors.primary,
+            height          : 2,
+          }}
+          onChangeTab={(tab, ref) => {
             setTabs(
               [...tabs].map((t, idx) => {
                 t.isActive = idx == tab.i ? true : false;
@@ -78,7 +190,11 @@ export default function TabsScreen(props) {
               key     = {`tab-${i}`}
               heading = {
                 <TabHeading style = {{backgroundColor: constants.colors.black}}>
-                <Text       style = {{color: isActive ? 'white' : 'grey', fontSize: widthPercentageToDP('3.5%')}}>
+                  <Text
+                    style={{
+                      color    : isActive ? 'white'          : 'grey',
+                      fontSize : widthPercentageToDP('3.5%'),
+                    }}>
                     {name}
                   </Text>
                 </TabHeading>

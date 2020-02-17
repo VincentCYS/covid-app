@@ -51,8 +51,36 @@ module.exports = StyleSheet.create({
     backgroundColor : constants.colors.darkGrey,
     borderColor     : constants.colors.black,
     margin          : 5,
-    padding         : wp('3%'),
-    paddingTop      : 0,
+    paddingLeft         : wp('3%'),
+    paddingRight         : wp('3%'),
+    paddingBottom   : wp('5%'),
     borderRadius    : 5
+  },
+  infectedTxtGp : {
+    flex : 1,
+    justifyContent : 'center',
+    flexDirection : 'row',
+    marginTop : 20
+  }, 
+  diffWrapper : {
+    flex : 1,
+    flexDirection : 'column',
+    alignItems : 'center',
+    justifyContent : 'center',
+  },
+  diffImage : {
+    width : wp('3%'),
+    height : wp('3%'),
+  },
+  infectedBtn : {
+    borderRadius : 10,
+    marginRight : wp('2%'),
+    padding : 0,
+    width : wp('20%'),
+    alignItems : 'center',
+    justifyContent : 'center',
+  },
+  infectedBtnTxt : {
+    fontSize : wp('3%'),
   }
 });

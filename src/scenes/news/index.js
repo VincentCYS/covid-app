@@ -5,9 +5,9 @@ import {
   Alert,
   TouchableOpacity,
   RefreshControl,
-  ActivityIndicator,
   Linking,
   FlatList,
+  StatusBar
 } from 'react-native';
 import {Card, CardItem} from 'native-base';
 import constants from '../../helpers/constants';
@@ -106,8 +106,11 @@ export default function News(props) {
     );
   }
 
+  
+
   return (
     <View style = {styles.container}>
+      <StatusBar barStyle = {'light-content'} backgroundColor = {constants.colors.black}/>
       <FlatList
         data           = {articles}
         refreshControl = {

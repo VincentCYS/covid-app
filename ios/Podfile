@@ -1,8 +1,8 @@
 platform :ios, '9.0'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-target 'ncov' do
-  # Pods for ncov
+target 'covid19' do
+  # Pods for covid19
   pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
   pod 'FBReactNativeSpec', :path => "../node_modules/react-native/Libraries/FBReactNativeSpec"
   pod 'RCTRequired', :path => "../node_modules/react-native/Libraries/RCTRequired"
@@ -36,7 +36,9 @@ target 'ncov' do
 
   pod 'RNSVG', :path => '../node_modules/react-native-svg'
 
-  target 'ncovTests' do
+  pod 'react-native-maps', :path => '../node_modules/react-native-maps'
+
+  target 'covid19Tests' do
     inherit! :search_paths
     # Pods for testing
   end
@@ -44,10 +46,10 @@ target 'ncov' do
   use_native_modules!
 end
 
-target 'ncov-tvOS' do
-  # Pods for ncov-tvOS
+target 'covid19-tvOS' do
+  # Pods for covid19-tvOS
 
-  target 'ncov-tvOSTests' do
+  target 'covid19-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
   end

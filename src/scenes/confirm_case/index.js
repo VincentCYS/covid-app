@@ -23,11 +23,12 @@ import {
 export default function ConfirmCase(props) {
   const [loading, setLoading]       = useState(true);
   const [updateDate, setUpdateDate] = useState('');
+  const [source, setSource]         = useState('');
   const [cases, setCases]           = useState({});
 
   useEffect(() => {
-    setTimeout(() => getCase(), 5000);
-  }, [cases]);
+    getCase()
+  }, [updateDate]);
 
   function getCase() {
     API.get(`/case`, {})
@@ -43,7 +44,8 @@ export default function ConfirmCase(props) {
         published = published.join(':');
         setLoading(false);
         setCases(res.data || []);
-        setUpdateDate(prev => (published ? published : prev));
+        setSource({name: res.source, url: res.sourceURL});
+        setUpdateDate(published);
       })
       .catch(err => {
         setLoading(false);
@@ -51,10 +53,18 @@ export default function ConfirmCase(props) {
       });
   }
 
+  function openSourceUrl(url) {
+    Linking.openURL(url).catch(err => console.error("Couldn't load page", err));
+  }
+
   function openMap(location) {
     Platform.OS === 'ios'
-      ? Linking.openURL(`http://maps.apple.com/maps?address=${location}`)
-       :  Linking.openURL(`http://maps.google.com/maps?address=${location}`);
+      ? Linking.openURL(
+          `https://www.google.com/maps/search/?api=1&query=${location}`,
+        )
+      : Linking.openURL(
+          `https://www.google.com/maps/search/?api=1&query=${location}`,
+        );
   }
 
   function renderCase({item, index}) {
@@ -62,31 +72,52 @@ export default function ConfirmCase(props) {
       <View>
         {index === 0 ? (
           <View>
-            <Text style = {styles.title}>香港武漢肺炎案例</Text>
-            <Text style = {styles.dateTxt}>更新時間: {updateDate}</Text>
-          </View>
-        ) : null}
-        <Card
-                key   = {`card-${index}`}
-                style = {[styles.card, {marginTop: wp('2%'), marginBottom: wp('3%')}]}>
-          <View style = {[styles.card, {marginTop: 5}]}>
-            <CardItem
-              style = {[styles.card, {flex: 4, alignItems: 'flex-start'}]}>
+            <Text             style   = {styles.title}>香港武漢肺炎案例</Text>
+            <Text             style   = {styles.dateTxt}>更新時間: {updateDate}</Text>
+            <TouchableOpacity onPress = {() => openSourceUrl(source.url)}>
               <Text
                 style={[
-                  styles.subtitle,
-                  {alignSelf: 'flex-start', color: constants.colors.primary},
+                  styles.dateTxt,
+                  {
+                    alignSelf    : 'flex-end',
+                    fontSize     : 14,
+                    marginTop    : 0,
+                    marginBottom : 10,
+                  },
                 ]}>
-                {`#${item.index} ${item.hkResidents}`}{' '}
+                來源 : {source.name}
               </Text>
-            </CardItem>
+            </TouchableOpacity>
+          </View>
+        ) : null}
+
+        <View key   = {`card-${index}`} style = {[styles.card, {marginBottom : 20}]}>
+        <View style = {[styles.card, {marginTop: 20}]}>
+            {/* title */}
+            <Text
+              style={[
+                styles.subtitle,
+                {
+                  alignSelf  : 'flex-start',
+                  color      : constants.colors.primary,
+                  marginLeft : wp('5%'),
+                },
+              ]}>
+              {`#${item.index} ${item.hkResidents}`}{' '}
+            </Text>
           </View>
 
-          <CardItem style = {styles.card}>
+          <View style = {{flexDirection: 'row'}}>
+            {/* age and hospital */}
             <View
               style={[
                 styles.card,
-                {flex: 4, flexDirection: 'column', alignItems: 'flex-start'},
+                {
+                  marginLeft  : wp('5%'),
+                  marginTop   : 10,
+                  marginRight : 20,
+                  flex : 4
+                },
               ]}>
               <Text
                 style={[
@@ -100,13 +131,15 @@ export default function ConfirmCase(props) {
               </TouchableOpacity>
             </View>
 
+            {/* case information */}
             <View
               style={[
                 styles.card,
-                {flex: 4, flexDirection: 'column', alignItems: 'flex-start'},
+                {flex: 5, flexDirection: 'column', alignItems: 'flex-start'},
               ]}>
               <View style = {[styles.roundWrapper, {marginBottom: 10}]}>
                 <Text
+                  adjustsFontSizeToFit
                   style={[
                     styles.normalTxt,
                     {fontSize: 13, fontWeight: 'bold'},
@@ -116,6 +149,7 @@ export default function ConfirmCase(props) {
               </View>
               <View style = {styles.roundWrapper}>
                 <Text
+                  adjustsFontSizeToFit
                   style={[
                     styles.normalTxt,
                     {fontSize: 13, fontWeight: 'bold'},
@@ -124,31 +158,20 @@ export default function ConfirmCase(props) {
                 </Text>
               </View>
             </View>
-          </CardItem>
-          <View
-            style={[
-              styles.card,
-              {flex: 1, flexDirection: 'row', alignItems: 'flex-start'},
-            ]}>
-            <CardItem
-              style={[
-                styles.card,
-                {flex: 1, flexDirection: 'row', alignItems: 'flex-start'},
-              ]}>
-              <Text
-                style = {styles.normalTxt}>{`發病日期 ${item.onSetDate}`}</Text>
-            </CardItem>
-            <CardItem
-              style={[
-                styles.card,
-                {flex: 1, flexDirection: 'row', alignItems: 'flex-start'},
-              ]}>
-              <Text style = {styles.normalTxt}>
-                {`確診日期 ${item.comfirmDate}`}{' '}
-              </Text>
-            </CardItem>
           </View>
-        </Card>
+          
+          {/* Date */}
+          <View style = {{flexDirection: 'row', marginLeft: wp('5%'), marginBottom : 10}}>
+            <Text
+              style={[
+                styles.normalTxt,
+                {flex: 1},
+              ]}>{`發病日期 ${item.onSetDate}`}</Text>
+            <Text style = {[styles.normalTxt, {flex: 1}]}>
+              {`確診日期 ${item.comfirmDate}`}{' '}
+            </Text>
+          </View>
+        </View>
       </View>
     );
   }
@@ -157,10 +180,14 @@ export default function ConfirmCase(props) {
   c.sort((a, b) => (a.index < b.index ? 1 : b.index < a.index ? -1 : 0));
 
   return (
-    <SafeAreaView style    = {styles.wrapper}>
-    <StatusBar    barStyle = {'light-content'} />
+    <SafeAreaView style = {styles.wrapper}>
+      <StatusBar
+        barStyle        = {'light-content'}
+        backgroundColor = {constants.colors.black}
+      />
       <FlatList
         data           = {c}
+        keyExtractor   = {(item, index) => `item-${index}`}
         refreshControl = {
           <RefreshControl
             colors     = {[constants.colors.primary]}
@@ -172,9 +199,8 @@ export default function ConfirmCase(props) {
             }}
           />
         }
-        refreshing         = {loading}
-        renderItem         = {item => renderCase(item)}
-        initialNumToRender = {10}
+        refreshing = {loading}
+        renderItem = {item => renderCase(item)}
       />
     </SafeAreaView>
   );

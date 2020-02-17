@@ -57,4 +57,15 @@ module.exports = StyleSheet.create({
     paddingLeft  : wp('2%'),
     paddingRight : wp('2%'),
   },
+  infectedTxtGp : {
+    flex : 1,
+    justifyContent : 'center',
+    alignItems : 'center',
+    flexDirection : 'row',
+    marginTop : 20
+  }, 
+  mapIcon : {
+    width : wp('5%'),
+    height : wp('5%'),
+  }
 });

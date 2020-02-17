@@ -10,16 +10,15 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "appcenter": "2.6.1",
-    "appcenter-analytics": "2.6.1",
-    "appcenter-crashes": "2.6.1",
     "native-base": "^2.13.8",
     "react": "16.9.0",
     "react-native": "0.61.5",
     "react-native-chart-kit": "^4.5.0",
+    "react-native-code-push": "^6.1.0",
     "react-native-collapsible": "^1.5.1",
     "react-native-drawer": "^2.5.1",
     "react-native-html-parser": "^0.1.0",
+    "react-native-maps": "0.26.1",
     "react-native-responsive-screen": "^1.4.0",
     "react-native-svg": "^11.0.1",
     "react-native-vector-icons": "^6.6.0"

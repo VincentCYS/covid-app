@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Linking,
+  StatusBar
 } from 'react-native';
 import constants from '../../helpers/constants';
 import styles from './about_us_styles';
@@ -38,10 +39,11 @@ export default function AboutUs(props) {
   }
   return !loading ? (
     <ScrollView style = {styles.container}>
-    <Text       style = {styles.title}>關於我們</Text>
+      <StatusBar barStyle = {'light-content'} backgroundColor = {constants.colors.black}/>
+      <Text       style = {styles.title}>關於我們</Text>
 
       <View style = {styles.section}>
-      <Text style = {styles.normalTxt}>
+        <Text style = {styles.normalTxt}>
           這個網站沒有《關於我們》，因為這是一位 Developer
           在工餘的時間花一個周末去建成的。 事源於有人要找政府所謂的 Open Data
           去研究「武漢肺炎」的資訊時，發現香港政府只提供 .CSV / PDF 資料。{'\n'}

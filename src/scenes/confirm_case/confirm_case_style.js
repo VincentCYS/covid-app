@@ -39,8 +39,8 @@ module.exports = StyleSheet.create({
     marginBottom : 5,
   },
   dateTxt: {
-    width        : "50%",
     alignSelf    : "flex-end",
+    marginRight  : 10,
     marginTop    : 20,
     marginBottom : 20,
     color        : constants.colors.fontWhite
@@ -60,6 +60,8 @@ module.exports = StyleSheet.create({
     backgroundColor : constants.colors.darkGrey,
     borderColor     : constants.colors.darkGrey,
     borderRadius    : 20,
+    margin : 5,
+    marginBottom : 10
   },
   roundWrapper : {
     backgroundColor : constants.colors.primary,
