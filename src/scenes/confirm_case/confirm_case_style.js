@@ -5,15 +5,15 @@ import {
 } from "react-native-responsive-screen";
 import constants from "../../helpers/constants";
 
-module.exports = StyleSheet.create({
+module.exports = (theme) => StyleSheet.create({
   wrapper: {
     flex            : 1,
-    backgroundColor : constants.colors.black,
+    backgroundColor : theme.black,
   },
   container: {
     flex            : 1,
-    backgroundColor : constants.colors.black,
-    padding         : 5
+    backgroundColor : theme.black,
+    padding         : 10
   },
 
   // Font Style
@@ -23,48 +23,46 @@ module.exports = StyleSheet.create({
     marginBottom : hp("1%"),
     alignSelf    : "center",
     fontWeight   : "bold",
-    color        : constants.colors.fontWhite
+    color        : theme.fontWhite
   },
   subtitle: {
-    color      : constants.colors.primary,
+    color      : theme.primary,
     alignSelf  : "center",
     fontSize   : wp("5%"),
     fontWeight : "500",
-    color      : constants.colors.fontWhite
+    color      : theme.fontWhite
   },
   normalTxt : {
     fontSize     : wp("4%"),
-    color        : constants.colors.fontWhite,
+    color        : theme.fontWhite,
     marginTop    : 5,
     marginBottom : 5,
   },
   dateTxt: {
-    alignSelf    : "flex-end",
-    marginRight  : 10,
-    marginTop    : 20,
-    marginBottom : 20,
-    color        : constants.colors.fontWhite
+    alignSelf   : "flex-end",
+    marginRight : 10,
+    fontSize    : 10,
+    color       : theme.fontWhite
   },
 
   // Body
   infectedCard : {
     flex            : 1,
-    backgroundColor : constants.colors.darkGrey,
-    borderColor     : constants.colors.black,
+    backgroundColor : theme.darkGrey,
+    borderColor     : theme.black,
     margin          : 5,
     padding         : wp('3%'),
     paddingTop      : 0,
     borderRadius    : 5
   },
   card: {
-    backgroundColor : constants.colors.darkGrey,
-    borderColor     : constants.colors.darkGrey,
-    borderRadius    : 20,
-    margin : 5,
-    marginBottom : 10
+    backgroundColor : theme.darkGrey,
+    borderColor     : theme.darkGrey,
+    borderRadius    : 10,
+    margin          : 15,
   },
   roundWrapper : {
-    backgroundColor : constants.colors.primary,
+    backgroundColor : theme.primary,
     borderRadius    : 20,
     padding         : 5,
     paddingLeft     : 15,

@@ -16,111 +16,102 @@ import {
   StatusBar,
   TouchableOpacity,
   ActivityIndicator,
-  Image,
+  Switch,
+  View,
+  Animated,
 } from 'react-native';
 import News from '../news';
 import Stat from '../stat';
 import ConfirmCase from '../confirm_case';
 import HighRisk from '../high_risk';
 import AboutUs from '../about_us';
-import constants from '../../helpers/constants';
 import {
-  widthPercentageToDP,
-  heightPercentageToDP,
+  widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
 import codePush from 'react-native-code-push';
-
-// TabsScreen = codePush({ checkFrequency: codePush.CheckFrequency.MANUAL, installMode: codePush.InstallMode.IMMEDIATE })(TabsScreen);
+import {ThemeContext} from '../../theme/theme-context.js';
+import constants from '../../helpers/constants';
+import Analytics from 'appcenter-analytics';
 
 export default function TabsScreen(props) {
-  // codePush.sync({ updateDialog: true },
-  //   (status) => {
-  //       switch (status) {
-  //           case codePush.SyncStatus.DOWNLOADING_PACKAGE:
-  //               // Show "downloading" modal
-  //               break;
-  //           case codePush.SyncStatus.INSTALLING_UPDATE:
-  //               // Hide "downloading" modal
-  //               break;
-  //       }
-  //   },
-  //   ({ receivedBytes, totalBytes, }) => {
-  //     /* Update download modal progress */
-  //   }
-  // );
+  const {theme, toggle, dark}         = React.useContext(ThemeContext);
+  const [loading, setLoading]         = useState(true);
+  const [isFirstTime, setIsFirstTime] = useState(true);
+  const [hvUpdate, setHvUpdate]       = useState(false);
+  const [activeTab, setAcitveTab]     = useState(0);
 
-  const [loading, setLoading]   = useState(true);
-  const [isFirstTime, setIsFirstTime]   = useState(true);
-  const [hvUpdate, setHvUpdate] = useState(false);
-  const [tabs, setTabs]         = useState([
+  const [height, setheight]                 = useState(new Animated.Value(50));
+  const [isNavBarHidden, setIsNavBarHidden] = useState(true);
+
+  const [tabs, setTabs] = useState([
     {
       name      : '圖表數據',
       isActive  : true,
-      component : <Stat />,
+      component : <Stat setHidden = {setHidden} setAnimation = {setAnimation} />,
     },
     {
       name      : '相關新聞',
       isActive  : false,
-      component : <News />,
+      component : <News setHidden = {setHidden} setAnimation = {setAnimation}/>,
     },
     {
       name      : '案例',
       isActive  : false,
-      component : <ConfirmCase />,
+      component : <ConfirmCase setHidden = {setHidden} setAnimation = {setAnimation}/>,
     },
     {
       name      : '高危地區',
       isActive  : false,
-      component : <HighRisk />,
+      component : <HighRisk setHidden = {setHidden} setAnimation = {setAnimation}/>,
     },
     {
       name      : '關於我們',
       isActive  : false,
-      component : <AboutUs />,
+      component : <AboutUs setHidden = {setHidden} setAnimation = {setAnimation}/>,
     },
   ]);
 
-  
+  async function trackEvent(name) {
+    var isEnabled = false;
+        isEnabled = await Analytics.isEnabled();
+    isEnabled ? Analytics.trackEvent(name) : null;
+  }
+
   useEffect(() => {
-    if (isFirstTime) {
-      codePush.checkForUpdate()
-      .then((update) => {
-        setIsFirstTime(false)
-      setLoading(false)
-      if (!update) {        
-        setHvUpdate(false)
-      } else {
-        setHvUpdate(true)
-      }
-      });
-    }
-  })
+    codePush.checkForUpdate().then(update => {
+      setIsFirstTime(false);
+      setLoading(false);
+      setHvUpdate(update ? true : false);
+    });
+  }, [hvUpdate]);
 
   function onButtonPress() {
-    setLoading(true)
+    setLoading(true);
 
-    codePush.sync({
-      updateDialog : true,
-      installMode  : codePush.InstallMode.IMMEDIATE,
-    }, (status) => {
-      switch (status) {
-          case codePush.SyncStatus.UPDATE_INSTALLED:
-              codePush.allowRestart()
-              codePush.restartApp(true);
-              // Hide "downloading" modal
-              break;
-      }
-    });
+    codePush.sync(
+      {
+        updateDialog : true,
+        installMode  : codePush.InstallMode.IMMEDIATE,
+      },
+      status => {
+        switch (status) {
+          case codePush.SyncStatus.UPDATE_INSTALLED : 
+            codePush.allowRestart();
+            codePush.restartApp(true);
+            break;
+        }
+      },
+    );
   }
 
   function activityIndicatorLoadingView() {
     return (
       <ActivityIndicator
-        color = {constants.colors.primary}
+        color = {theme.primary}
         size  = "small"
         style = {{
-          marginRight : 5,
-          backgroundColor : constants.colors.black,
+          marginRight     : 5,
+          backgroundColor : theme.black,
           alignItems      : 'center',
           justifyContent  : 'center',
         }}
@@ -129,81 +120,102 @@ export default function TabsScreen(props) {
   }
 
 
+  function setHidden() {
+    setIsNavBarHidden(!isNavBarHidden)
+  }
+
+  function setAnimation(disable) {
+    Animated.timing(height, {
+      duration: 50,
+      toValue: disable ? 0 : 50,
+    }).start()
+  };
 
   return (
-    <Container style = {{backgroundColor: constants.colors.black}}>
-      <StatusBar
-        barStyle        = {'light-content'}
-        backgroundColor = {constants.colors.black}
-      />
+    <Container style    = {{backgroundColor: theme.black}}>
+      <StatusBar barStyle = {'light-content'} backgroundColor = {theme.black} />
+      <Animated.View style = {{height : height}}>
 
       <Header
         hasTabs
-              style                 = {{backgroundColor: constants.colors.black}}
-              androidStatusBarColor = {constants.colors.darkGrey}>
+              style                 = {{backgroundColor: theme.black}}
+              androidStatusBarColor = {theme.black}>
         <Left style                 = {{flex: 1}} />
         <Body>
           <Title
             style={{
-              color     : constants.colors.primary,
+              color     : theme.primary,
               alignSelf : 'center',
               textAlign : 'center',
             }}>
-            COVID 19
+            COVID19
           </Title>
         </Body>
+
         <Right>
-          {
-            loading ? activityIndicatorLoadingView() : 
-            hvUpdate? 
-              <TouchableOpacity onPress = {() => onButtonPress()}>
-                <Text             style   = {{color: 'white', fontSize : 12}}>更新</Text>
-              </TouchableOpacity>
-             : 
-              <Image
-                style  = {{width: 20, height: 20, marginRight : 5}}
-                source = {{uri : constants.icon.tick}}
+          {loading ? (
+            activityIndicatorLoadingView()
+          ) : hvUpdate ? (
+            <TouchableOpacity onPress = {() => onButtonPress()}>
+            <Text             style   = {{color: theme.fontWhite, fontSize: 12}}>更新</Text>
+            </TouchableOpacity>
+          ) : (
+            <View
+              style={{
+                flexDirection  : 'row',
+                justifyContent : 'center',
+                alignItems     : 'center',
+              }}>
+              <Text style = {{color: theme.fontWhite, fontSize: wp('2.5%')}}>
+                光/暗
+              </Text>
+              <Switch
+                style         = {{height: 20}}
+                onValueChange = {() => toggle()}
+                value         = {dark}
+                thumbColor    = {constants.colors.primary}
+                trackColor    = {theme.fontWhite}
               />
-          }
-        
+            </View>
+          )}
         </Right>
       </Header>
+      </Animated.View>
 
-      <SafeAreaView style = {{flex: 1}}>
-        <Tabs
-          tabBarPosition        = {'top'}
-          tabBarActiveTextColor = {'#000'}
-          tabBarUnderlineStyle  = {{
-            backgroundColor : constants.colors.primary,
-            height          : 2,
-          }}
-          onChangeTab={(tab, ref) => {
-            setTabs(
-              [...tabs].map((t, idx) => {
-                t.isActive = idx == tab.i ? true : false;
-                return t;
-              }),
-            );
-          }}>
-          {tabs.map(({name, isActive, component}, i) => (
-            <Tab
-              key     = {`tab-${i}`}
-              heading = {
-                <TabHeading style = {{backgroundColor: constants.colors.black}}>
-                  <Text
-                    style={{
-                      color    : isActive ? 'white'          : 'grey',
-                      fontSize : widthPercentageToDP('3.5%'),
-                    }}>
-                    {name}
-                  </Text>
-                </TabHeading>
-              }>
-              {component}
-            </Tab>
-          ))}
-        </Tabs>
-      </SafeAreaView>
+
+        <SafeAreaView  style = {{flex: 1}}>
+            <Tabs
+              tabBarPosition        = {'top'}
+              tabBarActiveTextColor = {theme.black}
+              tabBarTextStyle       = {{color: theme.black}}
+              initialPage           = {0}
+              tabBarUnderlineStyle  = {{
+                backgroundColor : theme.primary,
+                height          : 2,
+              }}
+              onChangeTab={(tab, ref) => {
+                setAcitveTab(tab.i);
+                trackEvent(`viewed ${tab.ref.key}`);
+              }}>
+              {tabs.map(({name, isActive, component}, i) => (
+                <Tab
+                  key     = {`tab-${name}`}
+                  heading = {
+                    <TabHeading style = {{backgroundColor: theme.black}}>
+                      <Text
+                        style={{
+                          color    : activeTab == i ? theme.fontWhite : 'grey',
+                          fontSize : wp('3.5%'),
+                        }}>
+                        {name}
+                      </Text>
+                    </TabHeading>
+                  }>
+                  {component}
+                </Tab>
+              ))}
+            </Tabs>
+          </SafeAreaView>
     </Container>
   );
 }

@@ -36,7 +36,10 @@ target 'covid19' do
 
   pod 'RNSVG', :path => '../node_modules/react-native-svg'
 
-  pod 'react-native-maps', :path => '../node_modules/react-native-maps'
+
+  pod 'react-native-webview', :path => '../node_modules/react-native-webview'
+
+  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
 
   target 'covid19Tests' do
     inherit! :search_paths

@@ -19,6 +19,7 @@
 		2DEB7525B3DF6AEE2D8C6054 /* libPods-covid19-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05EB2CA802A243FC199133B8 /* libPods-covid19-tvOS.a */; };
 		8D4F660DD682C32E1BD4D7B2 /* libPods-covid19.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AD81667405BF76E852E2CFBD /* libPods-covid19.a */; };
 		94524DE92B462593B695A6D1 /* libPods-covid19Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 191838BFFE5945F55180A7C3 /* libPods-covid19Tests.a */; };
+		9CA807BC23FBC5B8005DEF8F /* AppCenter-Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9CA807BB23FBC5B8005DEF8F /* AppCenter-Config.plist */; };
 		BCC9CEE4A4488192A072C849 /* libPods-covid19-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AD1478D45B177CAB039598F /* libPods-covid19-tvOSTests.a */; };
 /* End PBXBuildFile section */
 
@@ -48,7 +49,7 @@
 		0F2AC9C22CD92F2CACD29868 /* Pods-covid19.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-covid19.release.xcconfig"; path = "Target Support Files/Pods-covid19/Pods-covid19.release.xcconfig"; sourceTree = "<group>"; };
 		0F3B2AC9EE0EF44986BBB7AD /* Pods-covid19Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-covid19Tests.debug.xcconfig"; path = "Target Support Files/Pods-covid19Tests/Pods-covid19Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		0F82CE00C3FCAE29F5630F3F /* Pods-ncov-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ncov-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-ncov-tvOS/Pods-ncov-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* COVID 19.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "COVID 19.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07F961A680F5B00A75B9A /* 香港人！抗逆！.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "香港人！抗逆！.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = covid19/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = covid19/AppDelegate.m; sourceTree = "<group>"; };
 		13B07FB21A68108700A75B9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
@@ -63,6 +64,7 @@
 		427E19A2728ED8FFCA75B9EE /* Pods-covid19-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-covid19-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-covid19-tvOSTests/Pods-covid19-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		6D03B82881471A97A883350D /* Pods-ncovTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ncovTests.release.xcconfig"; path = "Target Support Files/Pods-ncovTests/Pods-ncovTests.release.xcconfig"; sourceTree = "<group>"; };
 		9B6A3B2CB57CCD4908AE2E51 /* Pods-ncov-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ncov-tvOS.release.xcconfig"; path = "Target Support Files/Pods-ncov-tvOS/Pods-ncov-tvOS.release.xcconfig"; sourceTree = "<group>"; };
+		9CA807BB23FBC5B8005DEF8F /* AppCenter-Config.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AppCenter-Config.plist"; sourceTree = "<group>"; };
 		A5DD7743F4A0D7B4E723614A /* Pods-ncov.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ncov.release.xcconfig"; path = "Target Support Files/Pods-ncov/Pods-ncov.release.xcconfig"; sourceTree = "<group>"; };
 		A98A750F578DDFE0AF2AC49B /* Pods-ncov.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ncov.debug.xcconfig"; path = "Target Support Files/Pods-ncov/Pods-ncov.debug.xcconfig"; sourceTree = "<group>"; };
 		AD81667405BF76E852E2CFBD /* libPods-covid19.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-covid19.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -140,6 +142,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				9CA807BB23FBC5B8005DEF8F /* AppCenter-Config.plist */,
 			);
 			name = covid19;
 			sourceTree = "<group>";
@@ -182,7 +185,7 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* COVID 19.app */,
+				13B07F961A680F5B00A75B9A /* 香港人！抗逆！.app */,
 				00E356EE1AD99517003FC87E /* covid19Tests.xctest */,
 				2D02E47B1E0B4A5D006451C7 /* covid19-tvOS.app */,
 				2D02E4901E0B4A5D006451C7 /* covid19-tvOSTests.xctest */,
@@ -253,7 +256,7 @@
 			);
 			name = covid19;
 			productName = ncov;
-			productReference = 13B07F961A680F5B00A75B9A /* COVID 19.app */;
+			productReference = 13B07F961A680F5B00A75B9A /* 香港人！抗逆！.app */;
 			productType = "com.apple.product-type.application";
 		};
 		2D02E47A1E0B4A5D006451C7 /* covid19-tvOS */ = {
@@ -357,6 +360,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9CA807BC23FBC5B8005DEF8F /* AppCenter-Config.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 			);
@@ -392,7 +396,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -698,19 +702,20 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCD7E0B523E1ADC8F6AAEF65 /* Pods-covid19.debug.xcconfig */;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 4;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = D2RHKJ8VUC;
 				INFOPLIST_FILE = covid19/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.ncov.app;
-				PRODUCT_NAME = "COVID 19";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ico.app;
+				PRODUCT_NAME = "香港人！抗逆！";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -719,18 +724,19 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0F2AC9C22CD92F2CACD29868 /* Pods-covid19.release.xcconfig */;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 4;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = D2RHKJ8VUC;
 				INFOPLIST_FILE = covid19/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.ncov.app;
-				PRODUCT_NAME = "COVID 19";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ico.app;
+				PRODUCT_NAME = "香港人！抗逆！";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

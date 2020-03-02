@@ -5,42 +5,48 @@ import {
 } from "react-native-responsive-screen";
 import constants from "../../helpers/constants";
 
-module.exports = StyleSheet.create({
+module.exports = (theme) => StyleSheet.create({
   wrapper: {
     flex            : 1,
-    backgroundColor : constants.colors.black,
+    backgroundColor : theme.black,
   },
   container: {
     flex            : 1,
-    backgroundColor : constants.colors.black,
+    backgroundColor : theme.black,
     padding         : 5
   },
 
   // Font Style
   title: {
     fontSize     : wp("5%"),
-    marginTop    : hp("3%"),
+    marginTop    : hp("1%"),
     marginBottom : hp("1%"),
     alignSelf    : "center",
     fontWeight   : "bold",
-    color        : constants.colors.fontWhite
+    color        : theme.fontWhite
   },
   subtitle: {
-    color      : constants.colors.primary,
+    color      : theme.primary,
     alignSelf  : "center",
     fontSize   : wp("5%"),
     fontWeight : "500",
-    color      : constants.colors.fontWhite
+    color      : theme.fontWhite
   },
   normalTxt : {
     fontSize : wp("4%"),
-    color    : constants.colors.fontWhite,
+    color    : theme.fontWhite,
   },
   section : {
       margin : wp('5%'),
   },
+  shareIcon: {
+    width       : wp('7%'),
+    height      : wp('7%'),
+    marginRight : 20,
+    marginTop   : 20,
+  },
   button : {
-      backgroundColor : constants.colors.primary,
+      backgroundColor : theme.primary,
       borderRadius    : 20,
       alignItems      : 'center',
       justifyContent  : 'center',

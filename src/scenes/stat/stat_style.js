@@ -4,15 +4,18 @@ import {
   heightPercentageToDP as hp
 } from "react-native-responsive-screen";
 import constants from "../../helpers/constants";
+import React from 'react'
 
-module.exports = StyleSheet.create({
+
+
+module.exports = (theme) => StyleSheet.create({
   wrapper: {
     flex            : 1,
-    backgroundColor : constants.colors.black,
+    backgroundColor : theme.black,
   },
   container: {
     flex            : 1,
-    backgroundColor : constants.colors.black,
+    backgroundColor : theme.black,
     padding         : 10
   },
   title: {
@@ -21,35 +24,34 @@ module.exports = StyleSheet.create({
     marginBottom : hp("1%"),
     alignSelf    : "center",
     fontWeight   : "bold",
-    color        : constants.colors.fontWhite
+    color        : theme.fontWhite
   },
   subtitle: {
-    color      : constants.colors.primary,
+    color      : theme.primary,
     alignSelf  : "center",
     marginTop  : 20,
     fontSize   : wp("5%"),
     fontWeight : "500",
-    color      : constants.colors.fontWhite
+    color      : theme.fontWhite
   },
   card: {
-    backgroundColor : constants.colors.darkGrey,
-    borderColor     : constants.colors.darkGrey,
+    backgroundColor : theme.darkGrey,
+    borderColor     : theme.darkGrey,
     borderRadius    : 20
   },
   dateTxt: {
-    marginTop    : 20,
-    marginBottom : 20,
-    color        : constants.colors.fontWhite
+    fontSize : 10,
+    color        : theme.fontWhite
   },
   infectedWrapper : {
     flexDirection   : 'row',
     marginBottom    : hp('5%'),
-    backgroundColor : constants.colors.black
+    backgroundColor : theme.black
   },
   infectedCard : {
     flex            : 1,
-    backgroundColor : constants.colors.darkGrey,
-    borderColor     : constants.colors.black,
+    backgroundColor : theme.darkGrey,
+    borderColor     : theme.black,
     margin          : 5,
     paddingLeft         : wp('3%'),
     paddingRight         : wp('3%'),

@@ -7,67 +7,139 @@ import {
   RefreshControl,
   Linking,
   FlatList,
-  StatusBar
+  StatusBar,
+  Animated
 } from 'react-native';
-import {Card, CardItem} from 'native-base';
+import {Card, CardItem, Header, Item, Input} from 'native-base';
 import constants from '../../helpers/constants';
 import API from '../../helpers/api';
 import styles from './news_style';
+import NewsDetail from '../news_detail'
+import { ThemeContext, ThemeProvider } from '../../theme/theme-context.js'
+import Analytics from 'appcenter-analytics';
 
 export default function News(props) {
   const [loading, setLoading]   = useState(true);
   const [articles, setArticles] = useState([]);
+  const [timer, setTimer] = useState();
+  const [showNews, setShowNews] = useState(false);
+  const [news, setNews] = useState();
+  const [, forceUpdate] = useState();
+  const { theme, toggle, dark } = React.useContext(ThemeContext)
+
 
   useEffect(() => {
-    getArticles();
+    getArticles();       
+    Analytics.trackEvent(`viewed news`)
+ 
   }, []);
 
-  function getArticles() {
+  function getArticles(k) {
+
     setLoading(true);
-    API.get(`/articles/${props.numOfArticles || 50}`, {})
+    API.get(k ? `/articles/search/${k}` : `/articles/${props.numOfArticles || 700}`, {})
       .then(res => {
+        res.data.map(v => {
+          v.published = getPublishTimeString(v.published);
+        })
+
+
         setLoading(false);
         setArticles(res.data);
+        forceUpdate()
       })
       .catch(err => {
         setLoading(false);
-        Alert.alert('Failed to fetch error: ' + err.messages);
       });
+  }
+
+  function getPublishTimeString(published) {
+
+    var updateTime = null;
+    var diff =  new Date().getTime() - published;
+    var hrDiff = Math.floor(diff/1000/60/60);
+    updateTime = hrDiff < 23 && hrDiff > 0 ? `${hrDiff}小時前` : null
+    diff -= hrDiff*1000*60*60
+    
+    var minDiff = Math.floor(diff/1000/60);
+    updateTime = minDiff < 60 && minDiff > 0 && !updateTime ? `${minDiff}分鐘前` : updateTime
+    diff -= minDiff*1000*60
+    
+    var secondsDifference = Math.floor(diff/1000);
+    updateTime = secondsDifference < 60 && secondsDifference > 0 && !updateTime ? `${secondsDifference}秒前` : updateTime
+
+    if (!updateTime) {
+      published = new Date(published);
+      published.setHours(published.getHours() + 8);
+      published = published
+        .toISOString()
+        .split('T')
+        .join(' ')
+        .split(':');
+      published.pop();
+      published = published.join(':');
+      updateTime = published
+    }
+    
+    return updateTime
   }
 
   function openSourceUrl(url) {
     Linking.openURL(url).catch(err => console.error("Couldn't load page", err));
   }
 
-  function renderCardRow({item, index}) {
-    var published = new Date(item.published);
-    published.setHours(published.getHours() + 8);
-    published = published
-      .toISOString()
-      .split('T')
-      .join(' ')
-      .split(':');
-    published.pop();
-    published = published.join(':');
+  function onChangeText(k) {
+    if (timer) {
+      setTimer()
+      clearTimeout(timer);
+    }
+    setTimer(setTimeout(() => {
+      getArticles(k);    
+    }, 1000))
+  }
 
-    const regex   = /(<([^>]+)>)/gi;
-    const content = item.content.replace(regex, '');
+
+  function renderSearchBar() {
+    return (
+      <View style = {{height : 40, marginTop : 20, marginBottom : 20, backgroundColor : theme.black}}>
+        <Input
+          style={styles(theme).input}
+          placeholder="搜尋..."
+          onChangeText={k => onChangeText(k)}
+          placeholderTextColor  = {dark ? 'grey' : 'white'}
+          backgroundColor  = {dark ? 'white' : 'grey'}
+        />
+      </View>
+    );
+  }
+
+  function renderCardRow({item, index}) {
 
     return (
-      <View>
-        {index === 0 ? (
-          <Text style = {styles.title}>武漢肺炎相關新聞</Text>
-        ) : null}
-        <Card             key     = {`articles-${item._id}`} style = {styles.card}>
-        <CardItem         style   = {styles.cardItem}>
-        <TouchableOpacity onPress = {() => openSourceUrl(item.url)}>
+        <View key     = {`articles-${item._id}`} style = {styles(theme).card}>
+
+        <View style = {[styles(theme).cardItem, {paddingBottom : 10, paddingLeft : 10, flexDirection : 'row' }]}>
+            {/* source */}
+            <TouchableOpacity
+                    style   = {{flex: 5}}
+                    onPress = {() => openSourceUrl(item.sourceUrl)}>
+              <Text style   = {[styles(theme).timeTxt, { fontSize: 15 }]}>{item.source}</Text>
+            </TouchableOpacity>
+            <View style = {[styles(theme).cardTime, {flex : 1, alignSelf : 'flex-end'}]}>
+              <Text style = {styles(theme).timeTxt}>{item.published}</Text>
+            </View> 
+          </View>
+
+
+        <View         style   = {styles(theme).cardItem}>
+        <TouchableOpacity onPress = {() => { setNews(item); setShowNews(true)}}>          
               {/* news title */}
               <Text
                 style={[
-                  styles.cardTitle,
+                  styles(theme).cardTitle,
                   {
                     fontSize   : 20,
-                    color      : constants.colors.primary,
+                    color      : theme.fontWhite,
                     alignSelf  : 'center',
                     fontWeight : 'bold',
                   },
@@ -75,48 +147,36 @@ export default function News(props) {
                 {[item.title]}
               </Text>
             </TouchableOpacity>
-          </CardItem>
-
-          <CardItem style = {styles.cardItem}>
-            {/* source */}
-            <TouchableOpacity
-                    style   = {{flex: 1}}
-                    onPress = {() => openSourceUrl(item.sourceUrl)}>
-              <Text style   = {styles.timeTxt}>來源: {item.source}</Text>
-            </TouchableOpacity>
-            {/* updated time */}
-            <View style = {styles.cardTime}>
-            <Text style = {styles.timeTxt}>更新時間: {published}</Text>
-            </View>
-          </CardItem>
-
-          <CardItem style = {styles.cardItem}>
-            {/* news content */}
-            <Text
-              style={[
-                styles.cardTitle,
-                {fontSize: 16, fontWeight: '500', lineHeight: 20},
-              ]}
-              numberOfLines = {20}>
-              {content}
-            </Text>
-          </CardItem>
-        </Card>
+             {/* updated time */}
+      
+          </View>
       </View>
     );
   }
-
   
+  function handleScroll(event) {
+    props.setAnimation((event.nativeEvent.contentOffset.y > 50));
+    props.setHidden()
+  }
 
   return (
-    <View style = {styles.container}>
-      <StatusBar barStyle = {'light-content'} backgroundColor = {constants.colors.black}/>
+    <View style = {styles(theme).container}>
+      <StatusBar
+        barStyle        = {dark ? 'light-content' : 'dark-content'}
+        backgroundColor = {theme.black}
+      />
+
+      {renderSearchBar()}
+
       <FlatList
         data           = {articles}
+        scrollEventThrottle={16} 
+        onScroll={(e) => handleScroll(e)}
+
         refreshControl = {
           <RefreshControl
-            colors     = {[constants.colors.primary]}
-            tintColor  = {constants.colors.primary}
+            colors     = {[theme.primary]}
+            tintColor  = {theme.primary}
             refreshing = {loading}
             onRefresh  = {() => {
               setLoading(true);
@@ -126,8 +186,11 @@ export default function News(props) {
         }
         refreshing         = {loading}
         renderItem         = {(v, i) => renderCardRow(v, i)}
-        initialNumToRender = {10}
+        initialNumToRender = {50}
+        updateCellsBatchingPeriod ={50}
+
       />
+      {  news ? <NewsDetail news = {news} setShowNews = {setShowNews} showNews = {showNews}/> : null}
     </View>
   );
 }

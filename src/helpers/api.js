@@ -19,8 +19,10 @@ API.prototype.get = function(path, query = {}){
         new Promise((_resolve, _reject) => {
             var queryString                                = "";
             if (Object.keys(query).length > 0) queryString = `?${Object.keys(query).map(key => { return `${key} = ${query[key]}`}).join("&")}`;
-            // login
-            fetch(`${EP}${path}${queryString}`, { 
+            
+            var url = /http/i.test(path) ? path : EP+path
+
+            fetch(`${url}${queryString}`, { 
                 method  : 'GET',
                 headers : new Headers(headerParams)
             })

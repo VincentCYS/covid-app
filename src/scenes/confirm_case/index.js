@@ -10,6 +10,7 @@ import {
   Platform,
   Linking,
   FlatList,
+  Animated
 } from 'react-native';
 import {Card, CardItem} from 'native-base';
 import constants from '../../helpers/constants';
@@ -19,12 +20,15 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import { ThemeContext, ThemeProvider } from '../../theme/theme-context.js'
 
 export default function ConfirmCase(props) {
   const [loading, setLoading]       = useState(true);
   const [updateDate, setUpdateDate] = useState('');
   const [source, setSource]         = useState('');
   const [cases, setCases]           = useState({});
+  const { theme, toggle, dark } = React.useContext(ThemeContext)
+
 
   useEffect(() => {
     getCase()
@@ -71,36 +75,28 @@ export default function ConfirmCase(props) {
     return (
       <View>
         {index === 0 ? (
-          <View>
-            <Text             style   = {styles.title}>香港武漢肺炎案例</Text>
-            <Text             style   = {styles.dateTxt}>更新時間: {updateDate}</Text>
+          <View style = {{ marginTop : 20, marginBottom : 20, alignItems : 'flex-end' }}>
+            {/* <Text             style   = {styles(theme).title}>香港武漢肺炎案例</Text> */}
+            <Text             style   = {styles(theme).dateTxt}>更新時間: {updateDate}</Text>
             <TouchableOpacity onPress = {() => openSourceUrl(source.url)}>
               <Text
-                style={[
-                  styles.dateTxt,
-                  {
-                    alignSelf    : 'flex-end',
-                    fontSize     : 14,
-                    marginTop    : 0,
-                    marginBottom : 10,
-                  },
-                ]}>
+                style={
+                  styles(theme).dateTxt}>
                 來源 : {source.name}
               </Text>
             </TouchableOpacity>
           </View>
         ) : null}
 
-        <View key   = {`card-${index}`} style = {[styles.card, {marginBottom : 20}]}>
-        <View style = {[styles.card, {marginTop: 20}]}>
+        <View key   = {`card-${index}`} style = {[styles(theme).card, {marginBottom : 20}]}>
+        <View style = {[styles(theme).card, {marginTop: 20}]}>
             {/* title */}
             <Text
               style={[
-                styles.subtitle,
+                styles(theme).subtitle,
                 {
                   alignSelf  : 'flex-start',
-                  color      : constants.colors.primary,
-                  marginLeft : wp('5%'),
+                  color      : theme.primary,
                 },
               ]}>
               {`#${item.index} ${item.hkResidents}`}{' '}
@@ -111,48 +107,48 @@ export default function ConfirmCase(props) {
             {/* age and hospital */}
             <View
               style={[
-                styles.card,
+                styles(theme).card,
                 {
                   marginLeft  : wp('5%'),
                   marginTop   : 10,
                   marginRight : 20,
-                  flex : 4
+                  flex : 4,
                 },
               ]}>
               <Text
                 style={[
-                  styles.subtitle,
+                  styles(theme).subtitle,
                   {alignSelf: 'flex-start', marginBottom: 10},
                 ]}>
                 {`${item.age}歲 ${item.gender}`}{' '}
               </Text>
               <TouchableOpacity onPress = {() => openMap(item.hospital)}>
-              <Text             style   = {styles.normalTxt}>{`入住${item.hospital}`} </Text>
+              <Text             style   = {styles(theme).normalTxt}>{`入住${item.hospital}`} </Text>
               </TouchableOpacity>
             </View>
 
             {/* case information */}
             <View
               style={[
-                styles.card,
+                styles(theme).card,
                 {flex: 5, flexDirection: 'column', alignItems: 'flex-start'},
               ]}>
-              <View style = {[styles.roundWrapper, {marginBottom: 10}]}>
+              <View style = {[styles(theme).roundWrapper, {marginBottom: 10}]}>
                 <Text
                   adjustsFontSizeToFit
                   style={[
-                    styles.normalTxt,
-                    {fontSize: 13, fontWeight: 'bold'},
+                    styles(theme).normalTxt,
+                    {fontSize: 13, fontWeight: 'bold', color : '#fff' },
                   ]}>
                   {`${item.status}`}{' '}
                 </Text>
               </View>
-              <View style = {styles.roundWrapper}>
+              <View style = {styles(theme).roundWrapper}>
                 <Text
                   adjustsFontSizeToFit
                   style={[
-                    styles.normalTxt,
-                    {fontSize: 13, fontWeight: 'bold'},
+                    styles(theme).normalTxt,
+                    {fontSize: 13, fontWeight: 'bold', color : '#fff' },
                   ]}>
                   {`${item.caseType}`}{' '}
                 </Text>
@@ -161,13 +157,13 @@ export default function ConfirmCase(props) {
           </View>
           
           {/* Date */}
-          <View style = {{flexDirection: 'row', marginLeft: wp('5%'), marginBottom : 10}}>
+          <View style = {{flexDirection: 'row', marginLeft: wp('5%'), marginBottom : 20}}>
             <Text
               style={[
-                styles.normalTxt,
-                {flex: 1},
+                styles(theme).normalTxt,
+                {flex: 1, fontSize : 13},
               ]}>{`發病日期 ${item.onSetDate}`}</Text>
-            <Text style = {[styles.normalTxt, {flex: 1}]}>
+            <Text style = {[styles(theme).normalTxt, {flex: 1, fontSize : 13},]}>
               {`確診日期 ${item.comfirmDate}`}{' '}
             </Text>
           </View>
@@ -179,19 +175,27 @@ export default function ConfirmCase(props) {
   var c = cases.length ? cases : [];
   c.sort((a, b) => (a.index < b.index ? 1 : b.index < a.index ? -1 : 0));
 
+
+  function handleScroll(event) {
+    props.setAnimation((event.nativeEvent.contentOffset.y > 50));
+    props.setHidden()
+  }
+
   return (
-    <SafeAreaView style = {styles.wrapper}>
+    <View style = {styles(theme).container}>
       <StatusBar
-        barStyle        = {'light-content'}
-        backgroundColor = {constants.colors.black}
+        barStyle        = {dark ? 'light-content' : 'dark-content'}
+        backgroundColor = {theme.black}
       />
       <FlatList
+        scrollEventThrottle={16} 
+        onScroll={(e) => handleScroll(e)}
         data           = {c}
         keyExtractor   = {(item, index) => `item-${index}`}
         refreshControl = {
           <RefreshControl
-            colors     = {[constants.colors.primary]}
-            tintColor  = {constants.colors.primary}
+            colors     = {[theme.primary]}
+            tintColor  = {theme.primary}
             refreshing = {loading}
             onRefresh  = {() => {
               setLoading(true);
@@ -201,7 +205,9 @@ export default function ConfirmCase(props) {
         }
         refreshing = {loading}
         renderItem = {item => renderCase(item)}
+        initialNumToRender = {25}
+        updateCellsBatchingPeriod ={50}
       />
-    </SafeAreaView>
+    </View>
   );
 }

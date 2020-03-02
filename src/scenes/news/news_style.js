@@ -5,11 +5,11 @@ import {
 } from 'react-native-responsive-screen';
 import constants from '../../helpers/constants';
 
-module.exports = StyleSheet.create({
+module.exports = (theme) => StyleSheet.create({
   container: {
     width           : '100%',
     height          : '100%',
-    backgroundColor : constants.colors.black,
+    backgroundColor : theme.black,
     padding         : 10,
     paddingBottom   : 0,
   },
@@ -18,24 +18,26 @@ module.exports = StyleSheet.create({
     marginTop  : hp('3%'),
     alignSelf  : 'center',
     fontWeight : 'bold',
-    color      : constants.colors.fontWhite,
+    color      : theme.fontWhite,
   },
   list: {
     width           : '100%',
     height          : '100%',
     marginTop       : hp('5%'),
     paddingBottom   : hp('5%'),
-    backgroundColor : constants.colors.black,
+    backgroundColor : theme.black,
   },
   card: {
-    borderColor  : constants.colors.darkGrey,
-    marginTop    : 30,
-    marginBottom : 30,
+    backgroundColor : theme.darkGrey,
+    marginTop    : 20,
+    marginBottom : 20,
+    padding      : 20,
+    borderRadius : 10
   },
   cardTitle: {
     fontSize   : wp('4%'),
     fontWeight : '800',
-    color      : constants.colors.fontWhite,
+    color      : theme.fontWhite,
   },
   cardTime: {
     flex      : 1,
@@ -43,7 +45,8 @@ module.exports = StyleSheet.create({
   },
   timeTxt: {
     fontSize : wp('3%'),
-    color    : constants.colors.fontWhite,
+    color    : theme.fontWhite,
+    marginLeft : -10
   },
   reloadBtn: {
     flex           : 1,
@@ -51,8 +54,28 @@ module.exports = StyleSheet.create({
     justifyContent : 'center',
   },
   cardItem: {
-    backgroundColor : constants.colors.darkGrey,
-    borderColor     : constants.colors.darkGrey,
+    backgroundColor : theme.darkGrey,
+    borderColor     : theme.darkGrey,
     borderRadius    : 0,
+  },
+  searchBar: {
+    flex              : 1,
+    backgroundColor   : theme.black,
+    borderBottomWidth : 0,
+    marginLeft        : wp('5%'),
+    marginRight       : wp('5%'),
+    marginBottom      : 30,
+    marginTop      : 30
+  },
+  input: {
+    marginLeft : wp('7%'),
+    marginRight : wp('7%'),
+    paddingLeft  : wp('2%'),
+    paddingRight : wp('2%'),
+    borderBottomWidth : 0,  
+    borderRadius : 20,
+    fontSize : 15,
+    lineHeight : 15,
+    color : theme.black
   },
 });

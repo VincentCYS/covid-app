@@ -5,11 +5,11 @@ import {
 } from 'react-native-responsive-screen';
 import constants from '../../helpers/constants';
 
-module.exports = StyleSheet.create({
+module.exports = (theme) => StyleSheet.create({
   container: {
     width           : '100%',
     height          : '100%',
-    backgroundColor : constants.colors.black,
+    backgroundColor : theme.black,
     padding         : 10,
   },
   title: {
@@ -17,30 +17,30 @@ module.exports = StyleSheet.create({
     marginTop  : hp('3%'),
     alignSelf  : 'center',
     fontWeight : 'bold',
-    color      : constants.colors.fontWhite,
+    color      : theme.fontWhite,
   },
   list: {
     width           : '100%',
     height          : '100%',
     marginTop       : hp('5%'),
     paddingBottom   : hp('5%'),
-    backgroundColor : constants.colors.black,
+    backgroundColor : theme.black,
   },
 
   timeTxt: {
     fontSize : wp('4%'),
-    color    : constants.colors.fontWhite,
+    color    : theme.fontWhite,
   },
 
   itemHeader: {
     flex            : 1,
-    backgroundColor : constants.colors.darkGrey,
+    backgroundColor : theme.darkGrey,
     padding         : wp('5%'),
     margin          : 5,
   },
   itemContent: {
     flex            : 1,
-    backgroundColor : constants.colors.darkGrey,
+    backgroundColor : theme.darkGrey,
     padding         : wp('5%'),
     margin          : 5,
     marginLeft      : 20,
@@ -48,14 +48,22 @@ module.exports = StyleSheet.create({
   },
   searchBar: {
     flex              : 1,
-    backgroundColor   : constants.colors.black,
+    backgroundColor   : theme.black,
     borderBottomWidth : 0,
     marginLeft        : wp('5%'),
     marginRight       : wp('5%'),
+    marginTop         : 10
   },
   input: {
+    marginLeft : wp('7%'),
+    marginRight : wp('7%'),
     paddingLeft  : wp('2%'),
     paddingRight : wp('2%'),
+    borderBottomWidth : 0,  
+    borderRadius : 20,
+    fontSize : 15,
+    lineHeight : 15,
+    color : theme.black
   },
   infectedTxtGp : {
     flex : 1,
