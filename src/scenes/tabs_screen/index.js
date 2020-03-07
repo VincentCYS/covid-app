@@ -34,8 +34,11 @@ import constants from '../../helpers/constants';
 import Analytics from 'appcenter-analytics';
 
 export default function TabsScreen(props) {
+  // init state
   const {theme, toggle, dark}         = React.useContext(ThemeContext);
   const [loading, setLoading]         = useState(true);
+
+  // first time open updated version
   const [isFirstTime, setIsFirstTime] = useState(true);
   const [hvUpdate, setHvUpdate]       = useState(false);
   const [activeTab, setAcitveTab]     = useState(0);
@@ -43,6 +46,8 @@ export default function TabsScreen(props) {
   const [height, setheight]                 = useState(new Animated.Value(50));
   const [isNavBarHidden, setIsNavBarHidden] = useState(true);
 
+
+  // tabs properties
   const [tabs, setTabs] = useState([
     {
       name      : '圖表數據',
@@ -71,6 +76,7 @@ export default function TabsScreen(props) {
     },
   ]);
 
+  // enable Microsoft tracking event
   async function trackEvent(name) {
     var isEnabled = false;
         isEnabled = await Analytics.isEnabled();
@@ -78,16 +84,20 @@ export default function TabsScreen(props) {
   }
 
   useEffect(() => {
+    // check app update
     codePush.checkForUpdate().then(update => {
+      // set state
       setIsFirstTime(false);
       setLoading(false);
       setHvUpdate(update ? true : false);
     });
   }, [hvUpdate]);
 
-  function onButtonPress() {
+  // app update button
+  function updateApp() {
     setLoading(true);
 
+    // update app
     codePush.sync(
       {
         updateDialog : true,
@@ -96,6 +106,7 @@ export default function TabsScreen(props) {
       status => {
         switch (status) {
           case codePush.SyncStatus.UPDATE_INSTALLED : 
+            // restart app
             codePush.allowRestart();
             codePush.restartApp(true);
             break;
@@ -104,6 +115,7 @@ export default function TabsScreen(props) {
     );
   }
 
+  // loading spinner
   function activityIndicatorLoadingView() {
     return (
       <ActivityIndicator
@@ -119,11 +131,12 @@ export default function TabsScreen(props) {
     );
   }
 
-
+  // show and hide nav bar
   function setHidden() {
     setIsNavBarHidden(!isNavBarHidden)
   }
 
+  // set animation
   function setAnimation(disable) {
     Animated.timing(height, {
       duration: 50,
@@ -134,88 +147,90 @@ export default function TabsScreen(props) {
   return (
     <Container style    = {{backgroundColor: theme.black}}>
       <StatusBar barStyle = {'light-content'} backgroundColor = {theme.black} />
+
+      {/* Navigation Bar */}
       <Animated.View style = {{height : height}}>
-
-      <Header
-        hasTabs
-              style                 = {{backgroundColor: theme.black}}
-              androidStatusBarColor = {theme.black}>
-        <Left style                 = {{flex: 1}} />
-        <Body>
-          <Title
-            style={{
-              color     : theme.primary,
-              alignSelf : 'center',
-              textAlign : 'center',
-            }}>
-            COVID19
-          </Title>
-        </Body>
-
-        <Right>
-          {loading ? (
-            activityIndicatorLoadingView()
-          ) : hvUpdate ? (
-            <TouchableOpacity onPress = {() => onButtonPress()}>
-            <Text             style   = {{color: theme.fontWhite, fontSize: 12}}>更新</Text>
-            </TouchableOpacity>
-          ) : (
-            <View
+        <Header
+          hasTabs
+                style                 = {{backgroundColor: theme.black}}
+                androidStatusBarColor = {theme.black}>
+          <Left style                 = {{flex: 1}} />
+          
+          <Body>
+            <Title
               style={{
-                flexDirection  : 'row',
-                justifyContent : 'center',
-                alignItems     : 'center',
+                color     : theme.primary,
+                alignSelf : 'center',
+                textAlign : 'center',
               }}>
-              <Text style = {{color: theme.fontWhite, fontSize: wp('2.5%')}}>
-                光/暗
-              </Text>
-              <Switch
-                style         = {{height: 20}}
-                onValueChange = {() => toggle()}
-                value         = {dark}
-                thumbColor    = {constants.colors.primary}
-                trackColor    = {theme.fontWhite}
-              />
-            </View>
-          )}
-        </Right>
-      </Header>
+              COVID19
+            </Title>
+          </Body>
+
+          <Right>
+            {loading ? (
+              activityIndicatorLoadingView()
+            ) : hvUpdate ? (
+              <TouchableOpacity onPress = {() => updateApp()}>
+              <Text             style   = {{color: theme.fontWhite, fontSize: 12}}>更新</Text>
+              </TouchableOpacity>
+            ) : (
+              <View
+                style={{
+                  flexDirection  : 'row',
+                  justifyContent : 'center',
+                  alignItems     : 'center',
+                }}>
+                <Text style = {{color: theme.fontWhite, fontSize: wp('2.5%')}}>
+                  光/暗
+                </Text>
+                <Switch
+                  style         = {{height: 20}}
+                  onValueChange = {() => toggle()}
+                  value         = {dark}
+                  thumbColor    = {constants.colors.primary}
+                  trackColor    = {theme.fontWhite}
+                />
+              </View>
+            )}
+          </Right>
+        </Header>
       </Animated.View>
 
-
-        <SafeAreaView  style = {{flex: 1}}>
-            <Tabs
-              tabBarPosition        = {'top'}
-              tabBarActiveTextColor = {theme.black}
-              tabBarTextStyle       = {{color: theme.black}}
-              initialPage           = {0}
-              tabBarUnderlineStyle  = {{
-                backgroundColor : theme.primary,
-                height          : 2,
-              }}
-              onChangeTab={(tab, ref) => {
-                setAcitveTab(tab.i);
-                trackEvent(`viewed ${tab.ref.key}`);
-              }}>
-              {tabs.map(({name, isActive, component}, i) => (
-                <Tab
-                  key     = {`tab-${name}`}
-                  heading = {
-                    <TabHeading style = {{backgroundColor: theme.black}}>
-                      <Text
-                        style={{
-                          color    : activeTab == i ? theme.fontWhite : 'grey',
-                          fontSize : wp('3.5%'),
-                        }}>
-                        {name}
-                      </Text>
-                    </TabHeading>
-                  }>
-                  {component}
-                </Tab>
-              ))}
-            </Tabs>
-          </SafeAreaView>
+  
+      <SafeAreaView  style = {{flex: 1}}>
+        <Tabs
+          tabBarPosition        = {'top'}
+          tabBarActiveTextColor = {theme.black}
+          tabBarTextStyle       = {{color: theme.black}}
+          initialPage           = {0}
+          tabBarUnderlineStyle  = {{
+            backgroundColor : theme.primary,
+            height          : 2,
+          }}
+          onChangeTab={(tab, ref) => {
+            setAcitveTab(tab.i);
+            trackEvent(`viewed ${tab.ref.key}`);
+          }}>
+          {tabs.map(({name, isActive, component}, i) => (
+            <Tab
+              key     = {`tab-${name}`}
+              heading = {
+                <TabHeading style = {{backgroundColor: theme.black}}>
+                  <Text
+                    style={{
+                      color    : activeTab == i ? theme.fontWhite : 'grey',
+                      fontSize : wp('3.5%'),
+                    }}>
+                    {name}
+                  </Text>
+                </TabHeading>
+              }>
+              {component}
+            </Tab>
+          ))}
+        </Tabs>
+      </SafeAreaView>
     </Container>
   );
 }

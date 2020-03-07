@@ -37,6 +37,7 @@ module.exports = (theme) => StyleSheet.create({
     backgroundColor : theme.darkGrey,
     padding         : wp('5%'),
     margin          : 5,
+    flexDirection   : 'row'
   },
   itemContent: {
     flex            : 1,

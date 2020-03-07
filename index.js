@@ -11,6 +11,8 @@ import { ThemeContext, ThemeProvider } from './src/theme/theme-context.js'
 
 
 console.disableYellowBox = true;
+
+// wrapper the component with the theme
 export default function Main() {
     return (
         <ThemeProvider>
@@ -19,4 +21,5 @@ export default function Main() {
     )
 }
 
+// inject code push
 AppRegistry.registerComponent(appName, () => codePush(Main));

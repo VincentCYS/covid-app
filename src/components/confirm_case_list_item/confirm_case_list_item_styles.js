@@ -6,25 +6,10 @@ import {
 import constants from "../../helpers/constants";
 
 module.exports = (theme) => StyleSheet.create({
-  wrapper: {
-    flex            : 1,
-    backgroundColor : theme.black,
-  },
-  container: {
-    flex            : 1,
-    backgroundColor : theme.black,
-    padding         : 10
-  },
+
 
   // Font Style
-  title: {
-    fontSize     : wp("5%"),
-    marginTop    : hp("3%"),
-    marginBottom : hp("1%"),
-    alignSelf    : "center",
-    fontWeight   : "bold",
-    color        : theme.fontWhite
-  },
+
   subtitle: {
     color      : theme.primary,
     alignSelf  : "center",
@@ -68,5 +53,10 @@ module.exports = (theme) => StyleSheet.create({
     paddingLeft     : 10,
     paddingRight    : 10,
   },
-
+  infoIcon: {
+    flex        : 1,
+    marginRight : wp('1%'),
+    alignSelf   : 'flex-end',
+    resizeMode : 'contain'
+  },
 });

@@ -41,6 +41,8 @@ target 'covid19' do
 
   pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
 
+  pod 'RNTooltips', :path => '../node_modules/react-native-tooltips'
+
   target 'covid19Tests' do
     inherit! :search_paths
     # Pods for testing

@@ -5,6 +5,7 @@ import {
   StatusBar
 } from 'react-native';
 
+//setup theme color
 const themes = {
     dark: {
       primary     : '#a254ff',
@@ -23,7 +24,7 @@ const themes = {
   }
 
 
-
+// init state
 const initialState = {
     dark: true,
     theme: themes.dark,
@@ -33,36 +34,40 @@ const initialState = {
   
   function ThemeProvider({ children }) {
     const [dark, setDark] = React.useState(true);
-    const [refreshing, setRefreshing] = React.useState(false);
     const [theme, setTheme] = React.useState(themes.dark);
 
+    
     useEffect(()=>{
+      // default is dark theme
       var isDark = true;
 
+      // get cache data 
       AsyncStorage.getItem('dark')
       .then((dark) => {
+        // check theme
         isDark = dark === 'true';
+        // set theme
         setDark(isDark);
         setTheme(isDark ? themes.dark : themes.light);
       }).catch(err => {})
-
     },[])
 
-
-    // toggle theme color
+    // theme toggle
     function toggle () {
-      // setRefreshing(true)
-      var isDark = !dark
-            
-      AsyncStorage.setItem('dark',isDark+'')
-      .then((res) => {
+      // toggle
+      var isDark = !dark;
+
+      // set cache
+      AsyncStorage.setItem('dark', isDark+'')
+      .then((res) => {       
+        // set state 
         setDark(isDark)
       }).catch(err => {})
     }
   
     return (
       <ThemeContext.Provider value={{ theme : dark ? themes.dark : themes.light, toggle,  dark}} >
-      <StatusBar barStyle = {dark ? 'light-content' : 'dark-content'} backgroundColor = {dark ? '#000': '#fff'}/>
+        <StatusBar barStyle = {dark ? 'light-content' : 'dark-content'} backgroundColor = {dark ? '#000': '#fff'}/>
         {children}
       </ThemeContext.Provider> 
     )

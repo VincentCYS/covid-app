@@ -12,9 +12,7 @@ import {
   StatusBar,
   Animated
 } from 'react-native';
-// import MapView, {Marker} from 'react-native-maps';
-import {Header, Input, Item, Accordion} from 'native-base';
-import constants from '../../helpers/constants';
+import {Header, Input, Badge, Accordion} from 'native-base';
 import API from '../../helpers/api';
 import styles from './high_risk_styles';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -41,12 +39,15 @@ export default function HighRisk(props) {
 
 
   function getData(name) {
+    setDistricts([]);
+    setBuildings({});
 
-    name = activePage == 'home' ? 'https://api.data.gov.hk/v1/filter?q=%7B%22resource%22%3A%22http%3A%2F%2Fwww.chp.gov.hk%2Ffiles%2Fmisc%2Fhome_confinees_tier2_building_list.csv%22%2C%22section%22%3A1%2C%22format%22%3A%22json%22%7D'
+    name = activePage == 'transport' 
+    ? 'https://api.data.gov.hk/v1/filter?q=%7B%22resource%22%3A%22http%3A%2F%2Fwww.chp.gov.hk%2Ffiles%2Fmisc%2Fflights_trains_list_chi.csv%22%2C%22section%22%3A1%2C%22format%22%3A%22json%22%7D'
     : name;
 
 
-    if (activePage == 'home') {
+    if (activePage == 'transport' ) {
       var body = new FormData();
       // append data
       body.append("Content-Type", "multipart/form-data");
@@ -65,39 +66,54 @@ export default function HighRisk(props) {
       }
 
       xhr.onerror = function(error) {
+        setLoading(false)
         Alert.alert(error);
       };
   
       xhr.onload = function(e) {
         let res = xhr.response;
 
-
-     var d =  Object.keys(res.rows.map(r => r[1]).reduce((o, n) => 
+     var d =  Object.keys(res.rows.map(r => r[0]).reduce((o, n) => 
        Object.assign(o, {[n]: ''}), {}
       ));
 
       
       var array = [];
+
       d.map((v, i) => {
-        array.push({title: v.split(' ')[0], content: {
+        var title = v; 
+        array.push({title: title, content: {
             buildings : [],
             index: i
           } 
         });
       });
 
-      res.rows.map((v, i) => {
+      res.rows.map((v, i) => {        
+        var title = d.indexOf(v[0])
 
-        array[d.indexOf(v[1])].content.buildings.push({
-          building:   v[2].split('\n')[0],
-          lastDate : v[3]
+        array[title].content.buildings.push({
+          building: v[1],
+          lastDate : v[2],
+          relatedCase : v[3]
         });
       });
 
       array.map((v, i) => {
         v.content = JSON.stringify(v.content);
       });
-      // setBuildings(res.data)
+
+      var data = []
+
+      res.rows.map((v, i) => {
+        data.push({
+          district : v[1],
+          building:   v[2].split('\n')[0],
+          lastDate : v[3]
+        });
+      });      
+
+      setBuildings(data)
       setDistricts(array);
       setLoading(false)
       };
@@ -108,11 +124,9 @@ export default function HighRisk(props) {
 
       API.get(`/${name}`, {})
         .then(res => {
-          setLoading(false);
+          setLoading(false);        
 
-          if (res.lastUpdate) {
-            console.log('res.', res);
-            
+          if (res.lastUpdate) {            
             var published = new Date(res.lastUpdate);
             published.setHours(published.getHours() + 8);
             published = published
@@ -133,16 +147,16 @@ export default function HighRisk(props) {
 
           var array = [];
           d.map((v, i) => {
-            array.push({title: v, content: {
+            array.push({title: v.split(' ')[0], content: {
               buildings : [
-
               ],
               index: i
             } 
           });
           });
 
-          data.map((v, i) => {
+          data.map((v, i) => {       
+            v.building = v.building.split('\n')[0]
             array[d.indexOf(v.district)].content.buildings.push(v);
           });
 
@@ -151,14 +165,13 @@ export default function HighRisk(props) {
           });
 
           setSource({name: res.source, url: res.sourceURL});
-          setBuildings(res.data)
+          setBuildings(res.data);          
+
           setDistricts(array);
           setUpdateDate(prev => (published ? published : prev));
         })
         .catch(err => {
-          setLoading(false);
-          console.log('error', err);
-          
+          setLoading(false);          
           Alert.alert('Failed to fetch error: ' + err);
         });
     }
@@ -182,20 +195,23 @@ export default function HighRisk(props) {
     var content = JSON.parse(item.content);
 
     var buildings = content.buildings;
-    console.log('a', buildings);
-    
+
     buildings = buildings.filter(
       b => item.title.includes(keywords) || b.building.includes(keywords),
     );
     return buildings.length ? (
       <View style={styles(theme).itemHeader} key={`item-${item.title}`}>
-        <Text style={styles(theme).timeTxt}>{item.title}</Text>
+        <Badge style = {{ alignItems : 'center', justifyContent : 'center', backgroundColor : theme.primary}}>
+            <Text style = {{color : 'white'}}>{buildings.length}</Text>
+          </Badge>
+          <Text style={[styles(theme).timeTxt, {marginLeft : 10}]}>{item.title}</Text>
+
       </View>
     ) : null;
   }
 
   function renderContent(item) {
-    var buildings = JSON.parse(item.content).buildings;
+    var buildings = JSON.parse(item.content).buildings;    
     buildings = buildings.filter(
       b => item.title.includes(keywords) || b.building.includes(keywords),
     );
@@ -205,17 +221,19 @@ export default function HighRisk(props) {
         {buildings.map((c, i) => (
           <TouchableOpacity
             key={`detail-${i}`}
-            style={[styles(theme).itemContent, {marginLeft: 0, padding: 5}]}
+            style={[styles(theme).itemContent, {marginLeft: 0, padding: 10}]}
             onPress={() => openMap(c.building)}>
-            <Text style={styles(theme).timeTxt}>{`-  ${c.building}`}</Text>
+            <Text style={[styles(theme).timeTxt]}>{`-  ${c.building}`}</Text>
             <Text style={[styles(theme).timeTxt, {fontSize: 12, marginTop: 5}]}>
               {` ${
-                activePage == 'building'
+                activePage == 'home'
                   ? '       最後檢疫日期: '
+                  : activePage == 'transport'
+                  ? '       乘搭日期: '
                   : '       最後出現日期: '
               } ${c.lastDate || c.lastDayofHomeConfinees}`}
             </Text>
-            {activePage == 'building' ? (
+            {activePage == 'building' || activePage == 'transport' ? (
               <Text style={[styles(theme).timeTxt, {fontSize: 12, marginTop: 5}]}>
                 {`       相關案例:  ${c.relatedCase}`}
               </Text>
@@ -256,7 +274,8 @@ export default function HighRisk(props) {
           style={{
             borderColor:
               activePage == 'home' ? theme.primary : theme.fontWhite,
-            marginLeft: 5,
+            marginLeft  : 5,
+            marginRight : 5
           }}
           onPress={() => setActivePage('home')}>
           <Text
@@ -267,6 +286,28 @@ export default function HighRisk(props) {
               },
             ]}>
             家居檢疫大廈
+          </Text>
+        </TouchableOpacity>
+
+        <View style={{width: 1, height: 20, backgroundColor: theme.fontWhite}} />
+
+        <TouchableOpacity
+          bordered
+          style={{
+            borderColor:
+              activePage == 'transport' ? theme.primary : theme.fontWhite,
+              marginLeft: 5,
+            }}
+          onPress={() => setActivePage('transport')}>
+          <Text
+            style={[
+              styles(theme).infectedBtnTxt,
+              {
+                color:
+                  activePage == 'transport' ? theme.primary : theme.fontWhite,
+              },
+            ]}>
+            航班/火車/船編號
           </Text>
         </TouchableOpacity>
       </View>
@@ -335,9 +376,6 @@ export default function HighRisk(props) {
           </Text>
         </TouchableOpacity>
       </View>
-      {/* <TouchableOpacity style = {{flex : 1, alignItems : 'flex-end'}} onPress = {() => setShowMap(!showMap)}>
-        <Image style = {styles(theme).mapIcon} source = {!showMap ? require('../../assets/map-icon.png') : require('../../assets/bulleted-list.png')}/>
-      </TouchableOpacity> */}
       {renderTabs()}
 
     {
@@ -347,12 +385,12 @@ export default function HighRisk(props) {
       
         <Accordion
           dataArray={districts.filter(d => {
-            var content = JSON.parse(d.content);
+            var content = JSON.parse(d.content);            
             return d.title.includes(keywords) ||
-              content.filter(v => activePage == 'home' ?  v.building.building.includes(keywords) : v.building.includes(keywords))
+              content.buildings.filter(v => v.building.includes(keywords))
               ? d
               : null;
-          })}
+          }).sort((a, b) => (JSON.parse(a.content).buildings.length < JSON.parse(b.content).buildings.length ? 1 : JSON.parse(a.content).buildings.length > JSON.parse(b.content).buildings.length ? -1 : 0))}
           onAccordionOpen = {(item) => scrollToRow(item)}
           style={{marginBottom: hp('50%')}}
           animation={true}

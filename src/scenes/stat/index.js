@@ -136,7 +136,7 @@ export default function Stat(props) {
 
       {!loading ? (
         <Animated.ScrollView
-          scrollEventThrottle={16} 
+          scrollEventThrottle={100} 
           onScroll={(e) => handleScroll(e)}
 
           style          = {styles(theme).container}
