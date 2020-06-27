@@ -11,12 +11,12 @@ import {
   Animated,
 } from 'react-native';
 import {Input} from 'native-base';
-import constants from '../../helpers/constants';
 import API from '../../helpers/api';
 import styles from './news_style';
 import NewsDetail from '../news_detail';
 import {ThemeContext, ThemeProvider} from '../../theme/theme-context.js';
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
+// import { List } from 'react-content-loader/native'
 
 export default function News(props) {
   const [loading, setLoading]               = useState(true);
@@ -33,6 +33,13 @@ export default function News(props) {
   useEffect(() => {
     getArticles();
   }, []);
+
+  // const Loader = () => (
+  //   <View>
+  //     <List backgroundColor = {theme.darkGrey} style = {{ margin : 20 }}/>
+  //     <List backgroundColor = {theme.darkGrey} style = {{ margin : 20 }}/>
+  //   </View>
+  // )
 
   var timeout = null;
   
@@ -270,27 +277,29 @@ export default function News(props) {
       />
 
       {renderSearchBar()}
-
-      <FlatList
-        data                = {articles}
-        scrollEventThrottle = {16}
-        onScroll            = {e => handleScroll(e)}
-        refreshControl      = {
-          <RefreshControl
-            colors     = {[theme.primary]}
-            tintColor  = {theme.primary}
-            refreshing = {loading}
-            onRefresh  = {() => {
-              setLoading(true);
-              getArticles();
-            }}
-          />
-        }
-        refreshing                = {loading}
-        renderItem                = {(v, i) => renderCardRow(v, i)}
-        initialNumToRender        = {50}
-        updateCellsBatchingPeriod = {50}
-      />
+      {
+        //!loading ? 
+        <FlatList
+          data                = {articles}
+          scrollEventThrottle = {16}
+          onScroll            = {e => handleScroll(e)}
+          refreshControl      = {
+            <RefreshControl
+              colors     = {[theme.primary]}
+              tintColor  = {theme.primary}
+              refreshing = {loading}
+              onRefresh  = {() => {
+                setLoading(true);
+                getArticles();
+              }}
+            />
+          }
+          refreshing                = {loading}
+          renderItem                = {(v, i) => renderCardRow(v, i)}
+          initialNumToRender        = {50}
+          updateCellsBatchingPeriod = {50}
+        /> //: Loader()
+      }
       {news ? (
         <NewsDetail news = {news} setShowNews = {setShowNews} showNews = {showNews} />
       ) : null}

@@ -139,7 +139,7 @@ export default function TabsScreen(props) {
   // set animation
   function setAnimation(disable) {
     Animated.timing(height, {
-      duration: 50,
+      duration: 80,
       toValue: disable ? 0 : 50,
     }).start()
   };

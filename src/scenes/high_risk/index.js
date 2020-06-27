@@ -17,6 +17,7 @@ import API from '../../helpers/api';
 import styles from './high_risk_styles';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { ThemeContext, ThemeProvider } from '../../theme/theme-context.js'
+// import { List } from 'react-content-loader/native'
 
 export default function HighRisk(props) {
   const [loading, setLoading] = useState(true);
@@ -34,9 +35,14 @@ export default function HighRisk(props) {
   useEffect(() => {
     setLoading(true);
     getData(activePage);
-  }, [updateDate, activePage, showMap]);
+  }, [activePage]);
 
-
+  // const Loader = () => (
+  //   <View>
+  //     <List backgroundColor = {theme.darkGrey} style = {{ margin : 20 }}/>
+  //     <List backgroundColor = {theme.darkGrey} style = {{ margin : 20 }}/>
+  //   </View>
+  // )
 
   function getData(name) {
     setDistricts([]);
@@ -383,7 +389,9 @@ export default function HighRisk(props) {
       <View>
         {renderSearchBar()}
       
-        <Accordion
+       { 
+       //!loading ? 
+       <Accordion
           dataArray={districts.filter(d => {
             var content = JSON.parse(d.content);            
             return d.title.includes(keywords) ||
@@ -397,7 +405,8 @@ export default function HighRisk(props) {
           renderHeader={renderHeader}
           renderContent={renderContent}
           key = {'k'}
-        />
+        /> //: Loader()
+      }
       </View>
     }
     </ScrollView>

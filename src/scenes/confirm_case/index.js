@@ -21,6 +21,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {ThemeContext, ThemeProvider} from '../../theme/theme-context.js';
+// import ContentLoader, { Rect } from 'react-content-loader/native'
 
 import ConfirmCaseListItem from '../../components/confirm_case_list_item';
 
@@ -37,6 +38,35 @@ export default function ConfirmCase(props) {
   useEffect(() => {
     fetchAllData();
   }, []);
+
+  // const Loader = () => (
+  //   <ContentLoader viewBox="0 0 400 400" animate = {true} backgroundColor = {theme.darkGrey} style = {{
+  //             position       : 'absolute',
+  //             left           : '5%',
+  //             right          : '5%',
+  //             top            : 0,
+  //             bottom         : 0,
+  //           }}>
+  //     <Rect x="0" y="50" rx="4" ry="4" width="200" height="10" />
+  //     <Rect x="0" y="70" rx="4" ry="4" width="200" height="10" />
+
+  //     <Rect x="0" y="110" rx="4" ry="4" width="120" height="10" />
+  //     <Rect x="0" y="130" rx="4" ry="4" width="120" height="10" />
+  //     <Rect x="0" y="150" rx="4" ry="4" width="120" height="10" />
+
+  //     <Rect x="0" y="220" rx="4" ry="4" width="200" height="10" />
+  //     <Rect x="0" y="240" rx="4" ry="4" width="200" height="10" />
+
+  //     <Rect x="210" y="110" rx="4" ry="4" width="120" height="10" />
+  //     <Rect x="210" y="130" rx="4" ry="4" width="120" height="10" />
+  //     <Rect x="210" y="150" rx="4" ry="4" width="120" height="10" />
+
+  //     <Rect x="210" y="220" rx="4" ry="4" width="200" height="10" />
+  //     <Rect x="210" y="240" rx="4" ry="4" width="200" height="10" />
+  
+  //   </ContentLoader>
+  // )
+  
 
   function fetchAllData() {
     getData('case');
@@ -144,7 +174,7 @@ export default function ConfirmCase(props) {
                 fontSize     : 15,
                 marginBottom : 5,
               }}>
-              {`相關地區`}
+              {`曾出現地區`}
             </Text>
             {modalData.map(v => {
               return <Text style = {{color: theme.black}}>{`${v.building}   ${v.lastDate}`}</Text>;
@@ -152,7 +182,8 @@ export default function ConfirmCase(props) {
           </View>
         </Animated.View>
       </Modal>
-
+  {
+   // !loading ? 
       <FlatList
         scrollEventThrottle = {16}
         onScroll            = {e => handleScroll(e)}
@@ -185,7 +216,8 @@ export default function ConfirmCase(props) {
         )}
         initialNumToRender        = {25}
         updateCellsBatchingPeriod = {50}
-      />
+      /> //: Loader()
+  }
     </View>
   );
 }

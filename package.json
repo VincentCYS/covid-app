@@ -16,6 +16,7 @@
     "appcenter-crashes": "2.6.1",
     "native-base": "^2.13.8",
     "react": "16.9.0",
+    "react-content-loader": "^5.0.2",
     "react-native": "0.61.5",
     "react-native-chart-kit": "^4.5.0",
     "react-native-code-push": "^6.1.0",

@@ -20,6 +20,7 @@ import AgeBarChart from '../../components/age_bar_chart/age_bar_chart.js';
 import CasePieChart from '../../components/case_pie_chart/case_pie_chart.js';
 import ImmigrationLineChart from '../../components/immigration_line_chart/immigration_line_chart.js';
 import FigureItem from '../../components/figure_item/figure_tiem.js';
+// import ContentLoader, { Rect } from 'react-content-loader/native'
 
 export default function Stat(props) {
   const [loading, setLoading]               = useState(true);
@@ -34,23 +35,46 @@ export default function Stat(props) {
     getData('case');
   }, []);
 
+// const Loader = () => (
+//   <ContentLoader viewBox="0 0 400 380" animate = {true} backgroundColor = {theme.darkGrey} style = {{
+//             position       : 'absolute',
+//             left           : '5%',
+//             right          : '5%',
+//             top            : 0,
+//             bottom         : 0,
+//           }}>
+//     <Rect x="0" y="0" rx="4" ry="4" width="120" height="130" />
+//     <Rect x="140" y="0" rx="4" ry="4" width="120" height="130" />
+//     <Rect x="280" y="0" rx="4" ry="4" width="120" height="130" />
+
+//     <Rect x="0" y="150" rx="4" ry="4" width="120" height="130" />
+//     <Rect x="140" y="150" rx="4" ry="4" width="120" height="130" />
+//     <Rect x="280" y="150" rx="4" ry="4" width="120" height="130" />
+//   </ContentLoader>
+// )
+
+
+  // loading spinner
   function activityIndicatorLoadingView() {
     return (
       <ActivityIndicator
         color = {theme.primary}
         size  = "small"
         style = {{
-          position       : 'absolute',
-          left           : 0,
-          right          : 0,
-          top            : 0,
-          bottom         : 0,
-          alignItems     : 'center',
-          justifyContent : 'center',
+          position : 'absolute',
+          top : 0,
+          bottom : 0,
+          right:0,
+          left:0,
+          marginRight     : 5,
+          backgroundColor : theme.black,
+          alignItems      : 'center',
+          justifyContent  : 'center',
         }}
       />
     );
   }
+
 
   async function getData(type) {
     setLoading(true);

@@ -15,6 +15,7 @@ import constants from '../../helpers/constants';
 import styles from './about_us_styles';
 import {heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import {ThemeContext} from '../../theme/theme-context.js';
+import Analytics from 'appcenter-analytics';
 
 export default function AboutUs(props) {
   const [loading, setLoading] = useState(false);
@@ -39,8 +40,16 @@ export default function AboutUs(props) {
     );
   }
 
+  // enable Microsoft tracking event
+  async function trackEvent(name) {
+    var isEnabled = false;
+        isEnabled = await Analytics.isEnabled();
+    isEnabled ? Analytics.trackEvent(name) : null;
+  }
+
   async function onShare() {
     try {
+      trackEvent(`shared COVID19 app`);  
       const result = await Share.share({
         message : 
           Platform.OS == 'android'
@@ -108,10 +117,10 @@ export default function AboutUs(props) {
 
         <TouchableOpacity
           style   = {styles(theme).button}
-          onPress = {() =>
-            openSourceUrl(
-              'https://oneshop.academy/courses/6ef2c7d1d434b898fc74412b636387ecc7d44c40',
-            )
+          onPress = {() =>{
+            openSourceUrl('https://oneshop.academy/courses/6ef2c7d1d434b898fc74412b636387ecc7d44c40',)
+            trackEvent(`viewed oneshop academy`);  
+          }
           }>
           <Text style = {[styles(theme).normalTxt, {color: 'white'}]}>
             關於更多
@@ -150,8 +159,10 @@ export default function AboutUs(props) {
 
         <TouchableOpacity
           style   = {[styles(theme).button, {backgroundColor: 'grey', marginBottom : 100}]}
-          onPress = {() =>
-            openSourceUrl('https://www.facebook.com/oneshop.cloud/')
+          onPress = {() => {
+            openSourceUrl('https://www.facebook.com/oneshop.cloud/');
+            trackEvent(`viewed oneshop facebook`);
+          }
           }>
 
           <Text style = {[styles(theme).normalTxt, {color: 'white'}]}>
